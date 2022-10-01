@@ -33,6 +33,55 @@ func setupRouter() *gin.Engine {
 		c.String(http.StatusOK, "Ok")
 	})
 
+	r.GET("/tpc", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"pg":   0,
+			"data": make([]interface{}, 0),
+		})
+	})
+
+	r.POST("/tpc", func(c *gin.Context) {
+		c.String(http.StatusCreated, "Ok")
+	})
+
+	r.POST("/tpc/:topicId/cmt", func(c *gin.Context) {
+		c.String(http.StatusCreated, "Ok")
+	})
+
+	r.GET("/tpc/:topicId/cmt", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"id":  "",
+			"url": "",
+			"pg":  0,
+			"data": []gin.H{
+				{
+					"id":      "",
+					"comment": "",
+					"user": gin.H{
+						"id":   "",
+						"name": "",
+					},
+				},
+			},
+		})
+	})
+
+	r.POST("/cmt/:commentId", func(c *gin.Context) {
+		c.String(http.StatusCreated, "Ok")
+	})
+
+	r.GET("/cmt/:commentId", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"pg": 0,
+			"data": []gin.H{
+				{
+					"comment": "",
+					"user":    gin.H{},
+				},
+			},
+		})
+	})
+
 	r.NoRoute(func(c *gin.Context) {
 		c.String(http.StatusNotFound, "Not found")
 	})
