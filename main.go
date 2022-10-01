@@ -2,9 +2,10 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 
@@ -46,10 +47,25 @@ func setupDatabase() *pgxpool.Pool {
 	}
 	dbpool, err := pgxpool.New(context.Background(), connString)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to create connection pool: %v\n", err)
-		os.Exit(1)
+		log.Fatalln("Unable to create connection pool: ", err)
 	}
 	return dbpool
+}
+
+func shouldResetDatabase(db *pgxpool.Pool) {
+	switch v := strings.ToLower(os.Getenv("RESET_DATABASE")); v {
+	case "true", "1":
+		sql := `
+		DROP TABLE IF EXISTS comment;
+		DROP TABLE IF EXISTS topic;
+		DROP TABLE IF EXISTS avatar;
+		`
+		_, err := db.Exec(context.Background(), sql)
+		if err != nil {
+			log.Fatalln("Failed to reset database", err)
+		}
+		log.Println("Tables have been reset")
+	}
 }
 
 func createDatabaseTables(db *pgxpool.Pool) {
@@ -141,16 +157,19 @@ func createDatabaseTables(db *pgxpool.Pool) {
 		`
 	_, err := db.Exec(context.Background(), createTables)
 	if err != nil {
-		fmt.Printf("Create tables failed. %v", err)
-		os.Exit(1)
+		log.Fatalln("Create tables failed", err)
 	}
 }
 
 func main() {
 	db := setupDatabase()
 	defer db.Close()
+	shouldResetDatabase(db)
 	createDatabaseTables(db)
 
 	r := setupRouter()
-	r.Run(":8080")
+	err := r.Run(":8080")
+	if err != nil {
+		log.Fatalln(err)
+	}
 }
