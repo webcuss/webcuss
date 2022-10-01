@@ -59,7 +59,7 @@ func createDatabaseTables(db *pgxpool.Pool) {
 			"uname" VARCHAR(255) NOT NULL,
 			"pword" VARCHAR(255) NOT NULL,
 			"createdOn" TIMESTAMP NOT NULL,
-			"mana" INTEGER NOT NULL,
+			"pebbles" INTEGER NOT NULL,
 			"verifiedOn" TIMESTAMP NULL,
 			"email" VARCHAR(255) NULL,
 			PRIMARY KEY (id)
@@ -72,8 +72,8 @@ func createDatabaseTables(db *pgxpool.Pool) {
 		CREATE INDEX IF NOT EXISTS "idx_avatar_createdOn" ON avatar (
 			"createdOn" DESC
 		);
-		CREATE INDEX IF NOT EXISTS "idx_avatar_mana" ON avatar (
-			"mana" ASC
+		CREATE INDEX IF NOT EXISTS "idx_avatar_pebbles" ON avatar (
+			"pebbles" ASC
 		);
 		CREATE INDEX IF NOT EXISTS "idx_avatar_verifiedOn" ON avatar (
 			"verifiedOn" ASC NULLS LAST

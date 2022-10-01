@@ -20,7 +20,7 @@ go run main.go
 | uname                 | string                | y         |               |
 | pword                 | string/hash           |           |               |
 | createdOn             | timestamp             | y         |               |
-| mana                  | int                   |           |               |
+| pebbles               | int                   |           |               |
 | verifiedOn            | timestamp/null        |           |               |
 | email                 | string/null           |           |               |
 
