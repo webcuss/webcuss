@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/webcuss/webcuss/m8e"
 	"github.com/webcuss/webcuss/mgr/authmgr"
 	"log"
 	"net/http"
@@ -17,6 +18,9 @@ func setupRouter(db *pgxpool.Pool) *gin.Engine {
 	// Disable Console Color
 	// gin.DisableConsoleColor()
 	r := gin.Default()
+
+	// middleware
+	r.Use(m8e.A11r(db))
 
 	r.POST("/sup", func(c *gin.Context) {
 		authmgr.SignUp(c, db)
@@ -216,8 +220,6 @@ func main() {
 	createDatabaseTables(db)
 
 	r := setupRouter(db)
-	err := r.Run(":8080")
-	if err != nil {
-		log.Fatalln(err)
-	}
+
+	_ = r.Run(":8080")
 }
