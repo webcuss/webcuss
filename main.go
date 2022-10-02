@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/webcuss/webcuss/mgr/authmgr"
 	"log"
 	"net/http"
 	"os"
@@ -12,15 +13,13 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func setupRouter() *gin.Engine {
+func setupRouter(db *pgxpool.Pool) *gin.Engine {
 	// Disable Console Color
 	// gin.DisableConsoleColor()
 	r := gin.Default()
 
 	r.POST("/sup", func(c *gin.Context) {
-		c.JSON(http.StatusCreated, gin.H{
-			"token": "",
-		})
+		authmgr.SignUp(c, db)
 	})
 
 	r.POST("/sin", func(c *gin.Context) {
@@ -216,7 +215,7 @@ func main() {
 	shouldResetDatabase(db)
 	createDatabaseTables(db)
 
-	r := setupRouter()
+	r := setupRouter(db)
 	err := r.Run(":8080")
 	if err != nil {
 		log.Fatalln(err)
