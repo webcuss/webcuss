@@ -7,7 +7,6 @@ import (
 type Avatar struct {
 	Id         pgtype.UUID
 	Uname      pgtype.Text
-	Pword      pgtype.Text
 	CreatedOn  pgtype.Timestamp
 	Pebbles    pgtype.Numeric
 	VerifiedOn pgtype.Timestamp

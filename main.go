@@ -2,12 +2,13 @@ package main
 
 import (
 	"context"
-	"github.com/webcuss/webcuss/m8e"
-	"github.com/webcuss/webcuss/mgr/authmgr"
 	"log"
 	"net/http"
 	"os"
 	"strings"
+
+	"github.com/webcuss/webcuss/m8e"
+	"github.com/webcuss/webcuss/mgr/authmgr"
 
 	"github.com/gin-gonic/gin"
 
