@@ -2,13 +2,14 @@ package authmgr
 
 import (
 	"context"
+	"net/http"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/webcuss/webcuss/config"
 	"github.com/webcuss/webcuss/types"
-	"net/http"
-	"time"
 )
 
 func SignUp(c *gin.Context, db *pgxpool.Pool) {

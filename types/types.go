@@ -1,12 +1,16 @@
 package types
 
-import "time"
+import (
+	"github.com/jackc/pgx/v5/pgtype"
+)
 
 type Avatar struct {
-	Id        string
-	Uname     string
-	Pword     string
-	CreatedOn time.Time
+	Id         pgtype.UUID
+	Uname      pgtype.Text
+	CreatedOn  pgtype.Timestamp
+	Pebbles    pgtype.Numeric
+	VerifiedOn pgtype.Timestamp
+	Email      pgtype.Text
 }
 
 type SignUpReq struct {
