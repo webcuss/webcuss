@@ -57,7 +57,7 @@ func A11r(db *pgxpool.Pool) gin.HandlerFunc {
 			c.Set("user", usr)
 			c.Next()
 		} else {
-			log.Println(err)
+			log.Println(err) // could be token expired
 			c.String(http.StatusUnauthorized, "Unauthorized")
 			c.Abort()
 		}

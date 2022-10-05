@@ -21,9 +21,7 @@ func SetupRouter(db *pgxpool.Pool) *gin.Engine {
 	})
 
 	r.POST("/sin", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"token": "",
-		})
+		authmgr.SignIn(c, db)
 	})
 
 	r.POST("/sout", func(c *gin.Context) {

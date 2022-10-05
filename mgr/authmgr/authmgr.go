@@ -2,7 +2,10 @@ package authmgr
 
 import (
 	"context"
+	"fmt"
+	"github.com/jackc/pgx/v5/pgtype"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -11,6 +14,19 @@ import (
 	"github.com/webcuss/webcuss/config"
 	"github.com/webcuss/webcuss/types"
 )
+
+func createAuthToken(userId string) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"aud": strings.ReplaceAll(userId, "-", ""),
+		"exp": time.Now().Add(time.Hour * 24).Unix(),
+	})
+	tokenString, err := token.SignedString(config.GetSecret())
+	if err != nil {
+		return "", err
+	} else {
+		return tokenString, nil
+	}
+}
 
 func SignUp(c *gin.Context, db *pgxpool.Pool) {
 	var req types.SignUpReq
@@ -56,11 +72,7 @@ func SignUp(c *gin.Context, db *pgxpool.Pool) {
 	err = db.QueryRow(context.Background(), insertSql, req.Uname, req.Pword, time.Now().UTC()).Scan(&userId)
 	if err == nil {
 		// create token
-		token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-			"aud": userId,
-			"exp": time.Now().Add(time.Hour * 24).Unix(),
-		})
-		tokenString, err := token.SignedString(config.GetSecret())
+		tokenString, err := createAuthToken(userId)
 		if err == nil {
 			// commit txn
 			err := txn.Commit(context.Background())
@@ -78,4 +90,31 @@ func SignUp(c *gin.Context, db *pgxpool.Pool) {
 
 	_ = txn.Rollback(context.Background())
 	c.String(http.StatusInternalServerError, "Something went wrong")
+}
+
+func SignIn(c *gin.Context, db *pgxpool.Pool) {
+	var req types.SignInReq
+	err := c.Bind(&req)
+	if err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	// db login
+	var userId pgtype.UUID
+	q := `
+	SELECT a.Id
+	FROM avatar a
+	WHERE a.uname = $1
+		AND a.pword = crypt($2, a.pword);
+	`
+	err = db.QueryRow(context.Background(), q, req.Uname, req.Pword).Scan(&userId)
+	if err != nil {
+		c.String(http.StatusUnauthorized, "Incorrect credentials")
+		return
+	}
+	tokenString, err := createAuthToken(fmt.Sprintf("%x", userId.Bytes))
+	c.JSON(http.StatusOK, gin.H{
+		"token": tokenString,
+	})
 }
