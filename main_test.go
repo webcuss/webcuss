@@ -16,7 +16,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestPingRoute(t *testing.T) {
+func TestSignupShouldHaveStatusCode201(t *testing.T) {
 	dbConn := db.SetupDatabase("webcuss_test")
 	defer dbConn.Close()
 	db.CreateDatabaseTables(dbConn)
