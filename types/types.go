@@ -15,5 +15,10 @@ type Avatar struct {
 
 type SignUpReq struct {
 	Uname string `field:"uname" binding:"required"`
+	Pword string `field:"pword" binding:"required,len=6"`
+}
+
+type SignInReq struct {
+	Uname string `field:"uname" binding:"required"`
 	Pword string `field:"pword" binding:"required"`
 }
