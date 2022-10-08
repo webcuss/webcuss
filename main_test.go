@@ -46,9 +46,9 @@ func signUp(t *testing.T, r *gin.Engine, uname, pword string) string {
 }
 
 func TestSignUpShouldHaveStatusCode201(t *testing.T) {
-	dbConn := db.SetupDatabase("webcuss_test")
+	dbConn := db.Connect("webcuss_test")
 	defer dbConn.Close()
-	db.CreateDatabaseTables(dbConn)
+	db.CreateTables(dbConn)
 
 	router := route.SetupRouter(dbConn)
 
@@ -61,9 +61,9 @@ func TestSignUpShouldHaveStatusCode201(t *testing.T) {
 }
 
 func TestSignInShouldHaveStatusCode200(t *testing.T) {
-	dbConn := db.SetupDatabase("webcuss_test")
+	dbConn := db.Connect("webcuss_test")
 	defer dbConn.Close()
-	db.CreateDatabaseTables(dbConn)
+	db.CreateTables(dbConn)
 
 	router := route.SetupRouter(dbConn)
 
@@ -94,9 +94,9 @@ func TestSignInShouldHaveStatusCode200(t *testing.T) {
 }
 
 func TestSignInShouldHaveStatusCode401(t *testing.T) {
-	dbConn := db.SetupDatabase("webcuss_test")
+	dbConn := db.Connect("webcuss_test")
 	defer dbConn.Close()
-	db.CreateDatabaseTables(dbConn)
+	db.CreateTables(dbConn)
 
 	router := route.SetupRouter(dbConn)
 

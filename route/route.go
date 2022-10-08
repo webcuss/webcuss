@@ -1,27 +1,29 @@
 package route
 
 import (
+	"github.com/webcuss/webcuss/mgr/tpcmgr"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/webcuss/webcuss/m8e"
 	"github.com/webcuss/webcuss/mgr/authmgr"
-	"net/http"
 )
 
-func SetupRouter(db *pgxpool.Pool) *gin.Engine {
+func SetupRouter(dbConn *pgxpool.Pool) *gin.Engine {
 	// Disable Console Color
 	// gin.DisableConsoleColor()
 	r := gin.Default()
 
 	// middleware
-	r.Use(m8e.A11r(db))
+	r.Use(m8e.A11r(dbConn))
 
 	r.POST("/sup", func(c *gin.Context) {
-		authmgr.SignUp(c, db)
+		authmgr.SignUp(c, dbConn)
 	})
 
 	r.POST("/sin", func(c *gin.Context) {
-		authmgr.SignIn(c, db)
+		authmgr.SignIn(c, dbConn)
 	})
 
 	r.POST("/sout", func(c *gin.Context) {
@@ -36,7 +38,7 @@ func SetupRouter(db *pgxpool.Pool) *gin.Engine {
 	})
 
 	r.POST("/tpc", func(c *gin.Context) {
-		c.String(http.StatusCreated, "Ok")
+		tpcmgr.PostTopic(c, dbConn)
 	})
 
 	r.POST("/tpc/:topicId/cmt", func(c *gin.Context) {

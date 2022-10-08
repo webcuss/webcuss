@@ -14,34 +14,37 @@ go run main.go
 
 ## Database
 ### Table `avatar`
-| column                | type                  | index     | fk            |
-| ---                   | ---                   | ---       | ---           |
-| id                    | string                | y         |               |
-| uname                 | string                | y         |               |
-| pword                 | string/hash           |           |               |
-| createdOn             | timestamp             | y         |               |
-| pebbles               | int                   |           |               |
-| verifiedOn            | timestamp/null        |           |               |
-| email                 | string/null           |           |               |
+| column     | type           | index | fk  |
+|------------|----------------|-------|-----|
+| id         | string         | y     |     |
+| uname      | string         | y     |     |
+| pword      | string/hash    |       |     |
+| createdOn  | timestamp      | y     |     |
+| pebbles    | int            |       |     |
+| verifiedOn | timestamp/null |       |     |
+| email      | string/null    |       |     |
 
 ### Table `topic`
-| column                | type                  | index     | fk            |
-| ---                   | ---                   | ---       | ---           |
-| id                    | string                | y         |               |
-| url                   | string                | y         |               |
-| search                | string                | y         |               |
-| createdOn             | timestamp             | y         |               |
-| userId                | string                | y         | user.id       |
+| column      | type      | index | fk      |
+|-------------|-----------|-------|---------|
+| id          | string    | y     |         |
+| scheme      | string    |       |         |
+| hostname    | string    | y     |         |
+| path        | string    | y     |         |
+| query       | string    | y     |         |
+| querySearch | string    | y     |         |
+| createdOn   | timestamp | y     |         |
+| userId      | string    | y     | user.id |
 
 ### Table `comment`
-| column                | type                  | index     | fk            |
-| ---                   | ---                   | ---       | ---           |
-| id                    | string                | y         |               |
-| topicId               | string/null           | y         | topic.id      |
-| commentId             | string/null           | y         | comment.id    |
-| userId                | string                | y         | user.id       |
-| content               | string                |           |               |
-| createdOn             | timestamp             | y         |               |
+| column    | type        | index | fk         |
+|-----------|-------------|-------|------------|
+| id        | string      | y     |            |
+| topicId   | string/null | y     | topic.id   |
+| commentId | string/null | y     | comment.id |
+| userId    | string      | y     | user.id    |
+| content   | string      |       |            |
+| createdOn | timestamp   | y     |            |
 
 ## API Routes
 * `/sup` - Sign up
@@ -104,6 +107,12 @@ go run main.go
             }
             ```
         * returns 201 Created
+            ```json
+            {
+                "id": "string",
+                "commentId": "string|null"
+            }
+            ```
 * `tpc/{topicId}/cmt`
     * POST - add comment to a topic
         * body
