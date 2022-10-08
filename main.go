@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/webcuss/webcuss/db/migrate"
 	"os"
 
 	"github.com/webcuss/webcuss/db"
@@ -8,10 +9,13 @@ import (
 )
 
 func main() {
-	dbConn := db.SetupDatabase("webcuss")
+	dbConn := db.Connect("webcuss")
 	defer dbConn.Close()
-	db.ShouldResetDatabase(dbConn)
-	db.CreateDatabaseTables(dbConn)
+
+	if len(os.Args) == 2 && os.Args[1] == "migrate" {
+		migrate.Migrate(dbConn)
+		return
+	}
 
 	r := route.SetupRouter(dbConn)
 

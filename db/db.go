@@ -5,10 +5,9 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"log"
 	"os"
-	"strings"
 )
 
-func SetupDatabase(dbName string) *pgxpool.Pool {
+func Connect(dbName string) *pgxpool.Pool {
 	connString := os.Getenv("DATABASE_URL")
 	if connString == "" {
 		connString = "postgres://postgres:postgres@localhost:5432/" + dbName
@@ -20,23 +19,21 @@ func SetupDatabase(dbName string) *pgxpool.Pool {
 	return dbpool
 }
 
-func ShouldResetDatabase(db *pgxpool.Pool) {
-	switch v := strings.ToLower(os.Getenv("RESET_DATABASE")); v {
-	case "true", "1":
-		sql := `
+func ClearTables(db *pgxpool.Pool) {
+	sql := `
 		DROP TABLE IF EXISTS comment;
 		DROP TABLE IF EXISTS topic;
 		DROP TABLE IF EXISTS avatar;
 		`
-		_, err := db.Exec(context.Background(), sql)
-		if err != nil {
-			log.Fatalln("Failed to reset database", err)
-		}
-		log.Println("Tables have been reset")
+	_, err := db.Exec(context.Background(), sql)
+	if err != nil {
+		log.Println("Failed to clear tables", err)
+	} else {
+		log.Println("Tables have been cleared")
 	}
 }
 
-func CreateDatabaseTables(db *pgxpool.Pool) {
+func CreateTables(db *pgxpool.Pool) {
 	createTables := `
 		CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
@@ -67,8 +64,11 @@ func CreateDatabaseTables(db *pgxpool.Pool) {
 
 		CREATE TABLE IF NOT EXISTS topic (
 			"id" UUID NOT NULL DEFAULT gen_random_uuid(),
-			"url" TEXT NOT NULL,
-			"search" TEXT NOT NULL,
+			"scheme" TEXT NOT NULL,
+			"hostname" TEXT NOT NULL,
+			"path" TEXT NOT NULL,
+			"query" TEXT NOT NULL,
+			"querySearch" TEXT NOT NULL,
 			"createdOn" TIMESTAMP NOT NULL,
 			"userId" UUID NOT NULL,
 			PRIMARY KEY (id),
@@ -79,8 +79,17 @@ func CreateDatabaseTables(db *pgxpool.Pool) {
 		);
 
 		-- indexes
-		CREATE INDEX IF NOT EXISTS "idx_topic_url" ON topic (
-			"url" ASC
+		CREATE INDEX IF NOT EXISTS "idx_topic_hostname" ON topic (
+			"hostname" ASC
+		);
+		CREATE INDEX IF NOT EXISTS "idx_topic_path" ON topic (
+			"path" ASC
+		);
+		CREATE INDEX IF NOT EXISTS "idx_topic_query" ON topic (
+			"query" ASC
+		);
+		CREATE INDEX IF NOT EXISTS "idx_topic_querySearch" ON topic USING GIN (
+			to_tsvector('english', "querySearch")
 		);
 		CREATE INDEX IF NOT EXISTS "idx_topic_createdOn" ON topic (
 			"createdOn" DESC
@@ -127,6 +136,8 @@ func CreateDatabaseTables(db *pgxpool.Pool) {
 		`
 	_, err := db.Exec(context.Background(), createTables)
 	if err != nil {
-		log.Fatalln("Create tables failed", err)
+		log.Println("Create tables failed", err)
+	} else {
+		log.Println("Tables have been created")
 	}
 }

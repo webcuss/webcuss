@@ -15,10 +15,15 @@ type Avatar struct {
 
 type SignUpReq struct {
 	Uname string `field:"uname" binding:"required"`
-	Pword string `field:"pword" binding:"required,len=6"`
+	Pword string `field:"pword" binding:"required,min=6"`
 }
 
 type SignInReq struct {
 	Uname string `field:"uname" binding:"required"`
 	Pword string `field:"pword" binding:"required"`
+}
+
+type PostTopicReq struct {
+	Url     string `field:"url" binding:"required,min=3"`
+	Comment string `field:"comment"`
 }
