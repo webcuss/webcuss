@@ -74,9 +74,6 @@ go run main.go
                 "token": "string"
             }
             ```
-* `/sout` - Sign out
-    * POST
-        * returns 200 Ok
 * `/tpc` - Topic
     * GET - get top topics
         * qs
