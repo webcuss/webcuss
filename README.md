@@ -4,8 +4,13 @@
 Requirements:
 * GoLang 1.19+
 
+## Migrate database
+Create db tables
+```sh
+go run main.go migrate
+# go run main.go migrate clear # delete all tables & indexes
+```
 
-Run:
 ## Development
 ```sh
 go get ./...
