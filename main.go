@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+
 	"github.com/webcuss/webcuss/db"
 	"github.com/webcuss/webcuss/route"
 )
@@ -13,5 +15,8 @@ func main() {
 
 	r := route.SetupRouter(dbConn)
 
-	_ = r.Run(":8080")
+	err := r.Run(":8080")
+	if err != nil {
+		os.Exit(1)
+	}
 }
