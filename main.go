@@ -12,7 +12,7 @@ func main() {
 	dbConn := db.Connect("webcuss")
 	defer dbConn.Close()
 
-	if len(os.Args) == 2 && os.Args[1] == "migrate" {
+	if len(os.Args) > 1 && os.Args[1] == "migrate" {
 		migrate.Migrate(dbConn)
 		return
 	}
