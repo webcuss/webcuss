@@ -173,4 +173,3 @@ go run main.go
             ```
 ## Reference
 * [pgcrypto](https://www.meetspaceapp.com/2016/04/12/passwords-postgresql-pgcrypto.html)
-* 
