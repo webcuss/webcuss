@@ -7,6 +7,7 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/webcuss/webcuss/types"
+	"log"
 	"net/http"
 	"net/url"
 	"sort"
@@ -110,4 +111,92 @@ func PostTopic(c *gin.Context, dbConn *pgxpool.Pool) {
 		}
 	}
 	c.JSON(http.StatusCreated, res)
+}
+
+func GetTopic(c *gin.Context, dbConn *pgxpool.Pool) {
+	sql := `
+	SELECT t."id",
+		t."scheme",
+		t."hostname",
+		t."path",
+		t."query",
+		t."createdOn",
+		t."userId",
+		a."uname",
+		a."createdOn" AS "avatarCreatedOn",
+		a."pebbles",
+		a."verifiedOn" AS "avatarVerifiedOn",
+		a."email"
+	FROM topic t
+	INNER JOIN avatar a ON a."id" = t."userId"
+	ORDER BY t."createdOn" DESC;
+	`
+
+	type TopicWithAvatar struct {
+		Id               pgtype.UUID
+		Scheme           pgtype.Text
+		Hostname         pgtype.Text
+		Path             pgtype.Text
+		Query            pgtype.Text
+		CreatedOn        pgtype.Timestamp
+		UserId           pgtype.UUID
+		Uname            pgtype.Text
+		AvatarCreatedOn  pgtype.Timestamp
+		Pebbles          pgtype.Numeric
+		AvatarVerifiedOn pgtype.Timestamp
+		Email            pgtype.Text
+	}
+
+	scanned := make([]TopicWithAvatar, 0)
+	rows, err := dbConn.Query(context.Background(), sql)
+	if err != nil {
+		log.Println("Failed to fetch topics, err=", err)
+		c.JSON(http.StatusOK, gin.H{
+			"pg":   1,
+			"data": make([]interface{}, 0),
+		})
+		return
+	}
+	for rows.Next() {
+		var row TopicWithAvatar
+		err = rows.Scan(
+			&row.Id, &row.Scheme, &row.Hostname, &row.Path, &row.Query,
+			&row.CreatedOn, &row.UserId, &row.Uname, &row.AvatarCreatedOn,
+			&row.Pebbles, &row.AvatarVerifiedOn, &row.Email,
+		)
+		if err != nil {
+			log.Println("Error scanning topic row, err=", err)
+			continue
+		}
+		scanned = append(scanned, row)
+	}
+
+	result := make([]gin.H, 0)
+	for _, v := range scanned {
+		m := gin.H{
+			"id":        fmt.Sprintf("%x", v.Id.Bytes),
+			"scheme":    v.Scheme.String,
+			"hostname":  v.Hostname.String,
+			"path":      v.Path.String,
+			"query":     v.Query.String,
+			"createdOn": v.CreatedOn.Time.Format(time.RFC3339),
+			"userId":    fmt.Sprintf("%x", v.UserId.Bytes),
+			"uname":     v.Uname.String,
+			"pebbles":   v.Pebbles.Int,
+		}
+		if v.AvatarCreatedOn.Valid {
+			m["avatarCreatedOn"] = v.AvatarCreatedOn.Time.Format(time.RFC3339)
+		}
+		if v.AvatarVerifiedOn.Valid {
+			m["avatarVerifiedOn"] = v.AvatarVerifiedOn.Time.Format(time.RFC3339)
+		}
+		if v.Email.Valid {
+			m["email"] = v.Email.String
+		}
+		result = append(result, m)
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"pg":   1,
+		"data": result,
+	})
 }

@@ -31,10 +31,7 @@ func SetupRouter(dbConn *pgxpool.Pool) *gin.Engine {
 	})
 
 	r.GET("/tpc", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"pg":   0,
-			"data": make([]interface{}, 0),
-		})
+		tpcmgr.GetTopic(c, dbConn)
 	})
 
 	r.POST("/tpc", func(c *gin.Context) {
