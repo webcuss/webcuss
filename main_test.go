@@ -16,13 +16,20 @@ import (
 	"time"
 )
 
+const testDbName = "webcuss_test"
+
 type ResAuthBody struct {
 	Token string `json:"token"`
 }
 
-type ResTopicBody struct {
+type ResPostTopicBody struct {
 	Id        string `field:"id"`
 	CommentId string `field:"commentId"`
+}
+
+type ResGetTopicBody struct {
+	Data []any `field:"data"`
+	Pg   int   `field:"pg"`
 }
 
 func getRandInt() int {
@@ -55,7 +62,7 @@ func signUp(t *testing.T, r *gin.Engine, uname, pword string) string {
 }
 
 func TestSignUpShouldHaveStatusCode201(t *testing.T) {
-	dbConn := db.Connect("webcuss_test")
+	dbConn := db.Connect(testDbName)
 	defer dbConn.Close()
 	db.CreateTables(dbConn)
 
@@ -70,7 +77,7 @@ func TestSignUpShouldHaveStatusCode201(t *testing.T) {
 }
 
 func TestSignInShouldHaveStatusCode200(t *testing.T) {
-	dbConn := db.Connect("webcuss_test")
+	dbConn := db.Connect(testDbName)
 	defer dbConn.Close()
 	db.CreateTables(dbConn)
 
@@ -103,7 +110,7 @@ func TestSignInShouldHaveStatusCode200(t *testing.T) {
 }
 
 func TestSignInShouldHaveStatusCode401(t *testing.T) {
-	dbConn := db.Connect("webcuss_test")
+	dbConn := db.Connect(testDbName)
 	defer dbConn.Close()
 	db.CreateTables(dbConn)
 
@@ -125,7 +132,7 @@ func TestSignInShouldHaveStatusCode401(t *testing.T) {
 }
 
 func TestPostTopicShouldHaveExpectedResultsWhenHasComment(t *testing.T) {
-	dbConn := db.Connect("webcuss_test")
+	dbConn := db.Connect(testDbName)
 	defer dbConn.Close()
 	db.CreateTables(dbConn)
 
@@ -149,14 +156,14 @@ func TestPostTopicShouldHaveExpectedResultsWhenHasComment(t *testing.T) {
 	assert.Equal(t, http.StatusCreated, w.Code)
 	assert.NotEmpty(t, w.Body.String())
 
-	res := ResTopicBody{}
+	res := ResPostTopicBody{}
 	_ = json.Unmarshal(w.Body.Bytes(), &res)
 	assert.NotEmpty(t, res.Id)
 	assert.NotEmpty(t, res.CommentId)
 }
 
 func TestPostTopicShouldHaveExpectedResultsWhenNoComment(t *testing.T) {
-	dbConn := db.Connect("webcuss_test")
+	dbConn := db.Connect(testDbName)
 	defer dbConn.Close()
 	db.CreateTables(dbConn)
 
@@ -179,14 +186,14 @@ func TestPostTopicShouldHaveExpectedResultsWhenNoComment(t *testing.T) {
 	assert.Equal(t, http.StatusCreated, w.Code)
 	assert.NotEmpty(t, w.Body.String())
 
-	res := ResTopicBody{}
+	res := ResPostTopicBody{}
 	_ = json.Unmarshal(w.Body.Bytes(), &res)
 	assert.NotEmpty(t, res.Id)
 	assert.Empty(t, res.CommentId)
 }
 
 func TestPostTopicShouldReturnSameIdWhenUrlIsDuplicate(t *testing.T) {
-	dbConn := db.Connect("webcuss_test")
+	dbConn := db.Connect(testDbName)
 	defer dbConn.Close()
 	db.CreateTables(dbConn)
 
@@ -211,7 +218,7 @@ func TestPostTopicShouldReturnSameIdWhenUrlIsDuplicate(t *testing.T) {
 	log.Println("w1", w1.Body.String())
 	assert.Equal(t, http.StatusCreated, w1.Code)
 
-	res1 := ResTopicBody{}
+	res1 := ResPostTopicBody{}
 	_ = json.Unmarshal(w1.Body.Bytes(), &res1)
 
 	tpcId := res1.Id
@@ -226,8 +233,31 @@ func TestPostTopicShouldReturnSameIdWhenUrlIsDuplicate(t *testing.T) {
 	log.Println("w2", w2.Body.String())
 	assert.Equal(t, http.StatusCreated, w2.Code)
 
-	res2 := ResTopicBody{}
+	res2 := ResPostTopicBody{}
 	_ = json.Unmarshal(w2.Body.Bytes(), &res2)
 
 	assert.Equal(t, tpcId, res2.Id)
+}
+
+func TestGetTopicShouldHaveExpectedResult(t *testing.T) {
+	dbConn := db.Connect(testDbName)
+	defer dbConn.Close()
+	db.CreateTables(dbConn)
+
+	router := route.SetupRouter(dbConn)
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/tpc", nil)
+	req.Header.Set("Content-Type", "application/json")
+	randomUser := fmt.Sprintf("user%d", getRandInt())
+	req.Header.Set("Authorization", "Bearer "+signUp(t, router, randomUser, "123456"))
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+	assert.NotEmpty(t, w.Body.String())
+
+	var res ResGetTopicBody
+	_ = json.Unmarshal(w.Body.Bytes(), &res)
+	assert.Greater(t, res.Pg, 0)
+	assert.NotNil(t, res.Data)
 }
