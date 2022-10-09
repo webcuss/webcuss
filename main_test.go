@@ -16,13 +16,22 @@ import (
 	"time"
 )
 
-type ResBody struct {
+type ResAuthBody struct {
 	Token string `json:"token"`
+}
+
+type ResTopicBody struct {
+	Id        string `field:"id"`
+	CommentId string `field:"commentId"`
 }
 
 func getRandInt() int {
 	rand.Seed(time.Now().UnixNano())
 	return rand.Intn(999999)
+}
+
+func getRandomString() string {
+	return fmt.Sprintf("%d", getRandInt())
 }
 
 func signUp(t *testing.T, r *gin.Engine, uname, pword string) string {
@@ -39,7 +48,7 @@ func signUp(t *testing.T, r *gin.Engine, uname, pword string) string {
 
 	assert.Equal(t, http.StatusCreated, w.Code)
 
-	res := ResBody{}
+	res := ResAuthBody{}
 	_ = json.Unmarshal(w.Body.Bytes(), &res)
 
 	return res.Token
@@ -88,7 +97,7 @@ func TestSignInShouldHaveStatusCode200(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, w.Code)
 
-	res := ResBody{}
+	res := ResAuthBody{}
 	_ = json.Unmarshal(w.Body.Bytes(), &res)
 	assert.NotEmpty(t, res.Token)
 }
@@ -113,4 +122,112 @@ func TestSignInShouldHaveStatusCode401(t *testing.T) {
 
 	assert.Equal(t, http.StatusUnauthorized, w.Code)
 	assert.Equal(t, "Incorrect credentials", w.Body.String())
+}
+
+func TestPostTopicShouldHaveExpectedResultsWhenHasComment(t *testing.T) {
+	dbConn := db.Connect("webcuss_test")
+	defer dbConn.Close()
+	db.CreateTables(dbConn)
+
+	router := route.SetupRouter(dbConn)
+
+	randHostname := "https://" + getRandomString() + ".example.com/category/blah/page.php?p1=abc&p2=123"
+	body := gin.H{
+		"url":     randHostname,
+		"comment": "first comment!",
+	}
+	b, _ := json.Marshal(body)
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("POST", "/tpc", bytes.NewReader(b))
+	req.Header.Set("Content-Type", "application/json")
+	randomUser := fmt.Sprintf("user%d", getRandInt())
+	req.Header.Set("Authorization", "Bearer "+signUp(t, router, randomUser, "123456"))
+	router.ServeHTTP(w, req)
+
+	log.Println(w.Body.String())
+	assert.Equal(t, http.StatusCreated, w.Code)
+	assert.NotEmpty(t, w.Body.String())
+
+	res := ResTopicBody{}
+	_ = json.Unmarshal(w.Body.Bytes(), &res)
+	assert.NotEmpty(t, res.Id)
+	assert.NotEmpty(t, res.CommentId)
+}
+
+func TestPostTopicShouldHaveExpectedResultsWhenNoComment(t *testing.T) {
+	dbConn := db.Connect("webcuss_test")
+	defer dbConn.Close()
+	db.CreateTables(dbConn)
+
+	router := route.SetupRouter(dbConn)
+
+	randHostname := "https://" + getRandomString() + ".example.com/category/blah/page.php?p1=abc&p2=123"
+	body := gin.H{
+		"url": randHostname,
+	}
+	b, _ := json.Marshal(body)
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("POST", "/tpc", bytes.NewReader(b))
+	req.Header.Set("Content-Type", "application/json")
+	randomUser := fmt.Sprintf("user%d", getRandInt())
+	req.Header.Set("Authorization", "Bearer "+signUp(t, router, randomUser, "123456"))
+	router.ServeHTTP(w, req)
+
+	log.Println(w.Body.String())
+	assert.Equal(t, http.StatusCreated, w.Code)
+	assert.NotEmpty(t, w.Body.String())
+
+	res := ResTopicBody{}
+	_ = json.Unmarshal(w.Body.Bytes(), &res)
+	assert.NotEmpty(t, res.Id)
+	assert.Empty(t, res.CommentId)
+}
+
+func TestPostTopicShouldReturnSameIdWhenUrlIsDuplicate(t *testing.T) {
+	dbConn := db.Connect("webcuss_test")
+	defer dbConn.Close()
+	db.CreateTables(dbConn)
+
+	router := route.SetupRouter(dbConn)
+
+	randHostname := "https://" + getRandomString() + ".example.com/category/blah/page.php?p1=abc&p2=123"
+	body := gin.H{
+		"url":     randHostname,
+		"comment": "comment" + getRandomString(),
+	}
+	b, _ := json.Marshal(body)
+
+	randomUser := fmt.Sprintf("user%d", getRandInt())
+	authToken := "Bearer " + signUp(t, router, randomUser, "123456")
+
+	w1 := httptest.NewRecorder()
+	req1, _ := http.NewRequest("POST", "/tpc", bytes.NewReader(b))
+	req1.Header.Set("Content-Type", "application/json")
+	req1.Header.Set("Authorization", authToken)
+	router.ServeHTTP(w1, req1)
+
+	log.Println("w1", w1.Body.String())
+	assert.Equal(t, http.StatusCreated, w1.Code)
+
+	res1 := ResTopicBody{}
+	_ = json.Unmarshal(w1.Body.Bytes(), &res1)
+
+	tpcId := res1.Id
+	assert.NotEmpty(t, tpcId)
+
+	// request again
+	w2 := httptest.NewRecorder()
+	req2, _ := http.NewRequest("POST", "/tpc", bytes.NewReader(b))
+	req2.Header.Set("Content-Type", "application/json")
+	req2.Header.Set("Authorization", authToken)
+	router.ServeHTTP(w2, req2)
+	log.Println("w2", w2.Body.String())
+	assert.Equal(t, http.StatusCreated, w2.Code)
+
+	res2 := ResTopicBody{}
+	_ = json.Unmarshal(w2.Body.Bytes(), &res2)
+
+	assert.Equal(t, tpcId, res2.Id)
 }
