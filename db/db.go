@@ -69,6 +69,7 @@ func CreateTables(db *pgxpool.Pool) {
 			"path" TEXT NOT NULL,
 			"query" TEXT NOT NULL,
 			"querySearch" TEXT NOT NULL,
+			"title" TEXT NOT NULL,
 			"createdOn" TIMESTAMP NOT NULL,
 			"userId" UUID NOT NULL,
 			PRIMARY KEY (id),

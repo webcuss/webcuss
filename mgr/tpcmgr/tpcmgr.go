@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-func createOrGetTopic(dbConn *pgxpool.Pool, userId, urlString string) (string, bool, error) {
+func createOrGetTopic(dbConn *pgxpool.Pool, userId, urlString, title string) (string, bool, error) {
 	u, err := url.Parse(urlString)
 	if err != nil {
 		return "", false, err
@@ -49,13 +49,14 @@ func createOrGetTopic(dbConn *pgxpool.Pool, userId, urlString string) (string, b
 		     "path",
 		     "query",
 		     "querySearch",
+		     "title",
 		     "createdOn",
 		     "userId"
 		    )
-		VALUES ($1, $2, $3, $4, $5, $6, $7)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 		RETURNING id;
 		`
-		err = dbConn.QueryRow(context.Background(), sqlInsert, scheme, hostname, path, querySorted, strings.Join(querySlice, " "), time.Now().UTC(), userId).
+		err = dbConn.QueryRow(context.Background(), sqlInsert, scheme, hostname, path, querySorted, strings.Join(querySlice, " "), title, time.Now().UTC(), userId).
 			Scan(&tpcId)
 		if err != nil {
 			return "", true, err
@@ -93,7 +94,7 @@ func PostTopic(c *gin.Context, dbConn *pgxpool.Pool) {
 		return
 	}
 
-	tpcId, tpcCreated, err := createOrGetTopic(dbConn, userId, req.Url)
+	tpcId, tpcCreated, err := createOrGetTopic(dbConn, userId, req.Url, req.Title)
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
