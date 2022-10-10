@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-const testDbName = "webcuss_test"
+const testDbName = "webcuss"
 
 type ResAuthBody struct {
 	Token string `json:"token"`
