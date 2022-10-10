@@ -39,6 +39,7 @@ go run main.go
 | query       | string    | y     |         |
 | querySearch | string    | y     |         |
 | title       | string    |       |         |
+| likes       | int       | y     |         |
 | createdOn   | timestamp | y     |         |
 | userId      | string    | y     | user.id |
 

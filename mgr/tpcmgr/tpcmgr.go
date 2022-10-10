@@ -50,14 +50,18 @@ func createOrGetTopic(dbConn *pgxpool.Pool, userId, urlString, title string) (st
 		     "query",
 		     "querySearch",
 		     "title",
+		     "likes",
 		     "createdOn",
 		     "userId"
 		    )
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 		RETURNING id;
 		`
-		err = dbConn.QueryRow(context.Background(), sqlInsert, scheme, hostname, path, querySorted, strings.Join(querySlice, " "), title, time.Now().UTC(), userId).
-			Scan(&tpcId)
+		err = dbConn.QueryRow(
+			context.Background(), sqlInsert, scheme,
+			hostname, path, querySorted, strings.Join(querySlice, " "),
+			title, 0, time.Now().UTC(), userId,
+		).Scan(&tpcId)
 		if err != nil {
 			return "", true, err
 		}
