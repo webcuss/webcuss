@@ -70,6 +70,7 @@ func CreateTables(db *pgxpool.Pool) {
 			"query" TEXT NOT NULL,
 			"querySearch" TEXT NOT NULL,
 			"title" TEXT NOT NULL,
+			"likes" INTEGER NOT NULL,
 			"createdOn" TIMESTAMP NOT NULL,
 			"userId" UUID NOT NULL,
 			PRIMARY KEY (id),
