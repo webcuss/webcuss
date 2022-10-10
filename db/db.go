@@ -90,6 +90,9 @@ func CreateTables(db *pgxpool.Pool) {
 		CREATE INDEX IF NOT EXISTS "idx_topic_query" ON topic (
 			"query" ASC
 		);
+		CREATE INDEX IF NOT EXISTS "idx_topic_likes" ON topic (
+			"likes" DESC
+		);
 		CREATE INDEX IF NOT EXISTS "idx_topic_querySearch" ON topic USING GIN (
 			to_tsvector('english', "querySearch")
 		);
