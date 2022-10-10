@@ -141,6 +141,7 @@ func TestPostTopicShouldHaveExpectedResultsWhenHasComment(t *testing.T) {
 	randHostname := "https://" + getRandomString() + ".example.com/category/blah/page.php?p1=abc&p2=123"
 	body := gin.H{
 		"url":     randHostname,
+		"title":   "Lorem ipsum",
 		"comment": "first comment!",
 	}
 	b, _ := json.Marshal(body)
@@ -171,7 +172,8 @@ func TestPostTopicShouldHaveExpectedResultsWhenNoComment(t *testing.T) {
 
 	randHostname := "https://" + getRandomString() + ".example.com/category/blah/page.php?p1=abc&p2=123"
 	body := gin.H{
-		"url": randHostname,
+		"url":   randHostname,
+		"title": "Lorem ipsum",
 	}
 	b, _ := json.Marshal(body)
 
@@ -202,6 +204,7 @@ func TestPostTopicShouldReturnSameIdWhenUrlIsDuplicate(t *testing.T) {
 	randHostname := "https://" + getRandomString() + ".example.com/category/blah/page.php?p1=abc&p2=123"
 	body := gin.H{
 		"url":     randHostname,
+		"title":   "Lorem ipsum",
 		"comment": "comment" + getRandomString(),
 	}
 	b, _ := json.Marshal(body)

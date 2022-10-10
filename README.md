@@ -38,6 +38,7 @@ go run main.go
 | path        | string    | y     |         |
 | query       | string    | y     |         |
 | querySearch | string    | y     |         |
+| title       | string    |       |         |
 | createdOn   | timestamp | y     |         |
 | userId      | string    | y     | user.id |
 
@@ -108,6 +109,7 @@ go run main.go
             ```json
             {
                 "url": "string",
+                "title": "string",
                 "comment": "string|null"
             }
             ```

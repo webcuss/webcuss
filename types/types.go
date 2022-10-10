@@ -25,5 +25,6 @@ type SignInReq struct {
 
 type PostTopicReq struct {
 	Url     string `field:"url" binding:"required,min=3"`
+	Title   string `field:"title" binding:"required"`
 	Comment string `field:"comment"`
 }
