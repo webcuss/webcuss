@@ -28,3 +28,11 @@ type PostTopicReq struct {
 	Title   string `field:"title" binding:"required"`
 	Comment string `field:"comment"`
 }
+
+type PostCommentUri struct {
+	TopicId string `uri:"topicId" binding:"required"`
+}
+
+type PostCommentReq struct {
+	Comment string `field:"comment" binding:"required"`
+}
