@@ -1,6 +1,7 @@
 package route
 
 import (
+	"github.com/webcuss/webcuss/mgr/cmtmgr"
 	"github.com/webcuss/webcuss/mgr/tpcmgr"
 	"net/http"
 
@@ -39,7 +40,7 @@ func SetupRouter(dbConn *pgxpool.Pool) *gin.Engine {
 	})
 
 	r.POST("/tpc/:topicId/cmt", func(c *gin.Context) {
-		c.String(http.StatusCreated, "Ok")
+		cmtmgr.PostComment(c, dbConn)
 	})
 
 	r.GET("/tpc/:topicId/cmt", func(c *gin.Context) {

@@ -135,6 +135,12 @@ go run main.go
                 "comment": "string"
             }
             ```
+        * returns 201 created
+            ```json
+            {
+                "id": "string"
+            }
+            ```
     * GET - get the comments of the topic
         * qs
             * `&pg` - page number
