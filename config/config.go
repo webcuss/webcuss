@@ -7,6 +7,6 @@ func GetSecret() []byte {
 	if secret != "" {
 		return []byte(secret)
 	} else {
-		return []byte("ajfahfiAUHFUOfqjfjkahfusahfYAS98*AUV*asu8")
+		panic("App secret not found")
 	}
 }
