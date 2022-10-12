@@ -147,16 +147,14 @@ go run main.go
         * returns 200 Ok
             ```json
             {
-                "id": "string",
-                "url": "string",
                 "pg": "number",
                 "data": [
                     {
                         "id": "string",
-                        "comment": "string",
+                        "content": "string",
                         "user": {
                             "id": "string",
-                            "name": "string"
+                            "uname": "string"
                         }
                     }
                 ]
