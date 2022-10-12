@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	dbConn := db.Connect("webcuss")
+	dbConn := db.Connect()
 	defer dbConn.Close()
 
 	if len(os.Args) > 1 && os.Args[1] == "migrate" {
