@@ -121,17 +121,11 @@ func PostTopic(c *gin.Context, dbConn *pgxpool.Pool) {
 func GetTopic(c *gin.Context, dbConn *pgxpool.Pool) {
 	sql := `
 	SELECT t."id",
-		MIN(t."scheme") AS "scheme",
 		MIN(t."hostname") AS "hostname",
 		MIN(t."path") AS "path",
 		MIN(t."query") AS "query",
-		MIN(t."createdOn") AS "createdOn",
 		MIN(t."userId"::text)::uuid AS "userId",
 		MIN(a."uname") AS "uname",
-		MIN(a."createdOn") AS "avatarCreatedOn",
-		MIN(a."pebbles") AS "pebbles",
-		MIN(a."verifiedOn") AS "avatarVerifiedOn",
-		MIN(a."email") AS "email",
 		COUNT(c."id") AS "commentsCount",
 		MIN(t."likes") AS "likes",
 		MIN(t."title") AS "title"
@@ -139,25 +133,19 @@ func GetTopic(c *gin.Context, dbConn *pgxpool.Pool) {
 	INNER JOIN avatar a ON a."id" = t."userId"
 	LEFT JOIN comment c ON c."topicId" = t."id"
 	GROUP BY t."id"
-	ORDER BY "commentsCount" DESC NULLS LAST, "likes" DESC NULLS LAST;
+	ORDER BY "commentsCount" DESC NULLS LAST;
 	`
 
 	type TopicWithAvatar struct {
-		Id               pgtype.UUID
-		Scheme           pgtype.Text
-		Hostname         pgtype.Text
-		Path             pgtype.Text
-		Query            pgtype.Text
-		CreatedOn        pgtype.Timestamp
-		UserId           pgtype.UUID
-		Uname            pgtype.Text
-		AvatarCreatedOn  pgtype.Timestamp
-		Pebbles          pgtype.Numeric
-		AvatarVerifiedOn pgtype.Timestamp
-		Email            pgtype.Text
-		CommentsCount    pgtype.Numeric
-		Likes            pgtype.Numeric
-		Title            pgtype.Text
+		Id            pgtype.UUID
+		Hostname      pgtype.Text
+		Path          pgtype.Text
+		Query         pgtype.Text
+		UserId        pgtype.UUID
+		Uname         pgtype.Text
+		CommentsCount pgtype.Numeric
+		Likes         pgtype.Numeric
+		Title         pgtype.Text
 	}
 
 	scanned := make([]TopicWithAvatar, 0)
@@ -173,9 +161,8 @@ func GetTopic(c *gin.Context, dbConn *pgxpool.Pool) {
 	for rows.Next() {
 		var row TopicWithAvatar
 		err = rows.Scan(
-			&row.Id, &row.Scheme, &row.Hostname, &row.Path, &row.Query,
-			&row.CreatedOn, &row.UserId, &row.Uname, &row.AvatarCreatedOn,
-			&row.Pebbles, &row.AvatarVerifiedOn, &row.Email, &row.CommentsCount,
+			&row.Id, &row.Hostname, &row.Path, &row.Query,
+			&row.UserId, &row.Uname, &row.CommentsCount,
 			&row.Likes, &row.Title,
 		)
 		if err != nil {
@@ -189,26 +176,16 @@ func GetTopic(c *gin.Context, dbConn *pgxpool.Pool) {
 	for _, v := range scanned {
 		m := gin.H{
 			"id":            fmt.Sprintf("%x", v.Id.Bytes),
-			"scheme":        v.Scheme.String,
 			"hostname":      v.Hostname.String,
 			"path":          v.Path.String,
 			"query":         v.Query.String,
-			"createdOn":     v.CreatedOn.Time.Format(time.RFC3339),
-			"userId":        fmt.Sprintf("%x", v.UserId.Bytes),
-			"uname":         v.Uname.String,
-			"pebbles":       v.Pebbles.Int,
 			"commentsCount": v.CommentsCount.Int,
 			"likes":         v.Likes.Int,
 			"title":         v.Title.String,
-		}
-		if v.AvatarCreatedOn.Valid {
-			m["avatarCreatedOn"] = v.AvatarCreatedOn.Time.Format(time.RFC3339)
-		}
-		if v.AvatarVerifiedOn.Valid {
-			m["avatarVerifiedOn"] = v.AvatarVerifiedOn.Time.Format(time.RFC3339)
-		}
-		if v.Email.Valid {
-			m["email"] = v.Email.String
+			"user": gin.H{
+				"id":    fmt.Sprintf("%x", v.UserId.Bytes),
+				"uname": v.Uname.String,
+			},
 		}
 		result = append(result, m)
 	}
