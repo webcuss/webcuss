@@ -94,19 +94,17 @@ go run main.go
                 "pg": "number",
                 "data": [
                     {
-                        "avatarCreatedOn": "string",
-                        "commentsCount": "number",
-                        "createdOn": "string",
-                        "hostname": "string",
                         "id": "string",
-                        "likes": "number",
+                        "hostname": "string",
                         "path": "string",
-                        "pebbles": "number",
                         "query": "string",
-                        "scheme": "string",
                         "title": "string",
-                        "uname": "string",
-                        "userId": "string"
+                        "commentsCount": "number",
+                        "likes": "number",
+                        "user": {
+                            "id": "string",
+                            "uname": "string"
+                        }
                     }
                 ]
             }
