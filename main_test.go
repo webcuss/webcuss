@@ -82,7 +82,7 @@ func signUp(t *testing.T, r *gin.Engine, uname, pword string) string {
 }
 
 func TestSignUpShouldHaveStatusCode201(t *testing.T) {
-	dbConn := db.Connect(testDbName)
+	dbConn := db.Connect()
 	defer dbConn.Close()
 	db.CreateTables(dbConn)
 
@@ -97,7 +97,7 @@ func TestSignUpShouldHaveStatusCode201(t *testing.T) {
 }
 
 func TestSignInShouldHaveStatusCode200(t *testing.T) {
-	dbConn := db.Connect(testDbName)
+	dbConn := db.Connect()
 	defer dbConn.Close()
 	db.CreateTables(dbConn)
 
@@ -130,7 +130,7 @@ func TestSignInShouldHaveStatusCode200(t *testing.T) {
 }
 
 func TestSignInShouldHaveStatusCode401(t *testing.T) {
-	dbConn := db.Connect(testDbName)
+	dbConn := db.Connect()
 	defer dbConn.Close()
 	db.CreateTables(dbConn)
 
@@ -152,7 +152,7 @@ func TestSignInShouldHaveStatusCode401(t *testing.T) {
 }
 
 func TestPostTopicShouldHaveExpectedResultsWhenHasComment(t *testing.T) {
-	dbConn := db.Connect(testDbName)
+	dbConn := db.Connect()
 	defer dbConn.Close()
 	db.CreateTables(dbConn)
 
@@ -184,7 +184,7 @@ func TestPostTopicShouldHaveExpectedResultsWhenHasComment(t *testing.T) {
 }
 
 func TestPostTopicShouldHaveExpectedResultsWhenNoComment(t *testing.T) {
-	dbConn := db.Connect(testDbName)
+	dbConn := db.Connect()
 	defer dbConn.Close()
 	db.CreateTables(dbConn)
 
@@ -215,7 +215,7 @@ func TestPostTopicShouldHaveExpectedResultsWhenNoComment(t *testing.T) {
 }
 
 func TestPostTopicShouldReturnSameIdWhenUrlIsDuplicate(t *testing.T) {
-	dbConn := db.Connect(testDbName)
+	dbConn := db.Connect()
 	defer dbConn.Close()
 	db.CreateTables(dbConn)
 
@@ -263,7 +263,7 @@ func TestPostTopicShouldReturnSameIdWhenUrlIsDuplicate(t *testing.T) {
 }
 
 func TestGetTopicShouldHaveExpectedResult(t *testing.T) {
-	dbConn := db.Connect(testDbName)
+	dbConn := db.Connect()
 	defer dbConn.Close()
 	db.CreateTables(dbConn)
 
@@ -286,7 +286,7 @@ func TestGetTopicShouldHaveExpectedResult(t *testing.T) {
 }
 
 func TestPostCommentShouldHaveExpectedResult(t *testing.T) {
-	dbConn := db.Connect(testDbName)
+	dbConn := db.Connect()
 	defer dbConn.Close()
 	db.CreateTables(dbConn)
 
@@ -333,7 +333,7 @@ func TestPostCommentShouldHaveExpectedResult(t *testing.T) {
 }
 
 func TestPostCommentShouldHave401BadRequestWhenTopicIdIsInvalid(t *testing.T) {
-	dbConn := db.Connect(testDbName)
+	dbConn := db.Connect()
 	defer dbConn.Close()
 	db.CreateTables(dbConn)
 
@@ -358,7 +358,7 @@ func TestPostCommentShouldHave401BadRequestWhenTopicIdIsInvalid(t *testing.T) {
 }
 
 func TestPostCommentShouldHave404NotFoundWhenTopicIdIsNonExistent(t *testing.T) {
-	dbConn := db.Connect(testDbName)
+	dbConn := db.Connect()
 	defer dbConn.Close()
 	db.CreateTables(dbConn)
 
@@ -382,7 +382,7 @@ func TestPostCommentShouldHave404NotFoundWhenTopicIdIsNonExistent(t *testing.T) 
 }
 
 func TestGetCommentShouldHaveExpectedResult(t *testing.T) {
-	dbConn := db.Connect(testDbName)
+	dbConn := db.Connect()
 	defer dbConn.Close()
 	db.CreateTables(dbConn)
 
@@ -471,7 +471,7 @@ func TestGetCommentShouldHaveExpectedResult(t *testing.T) {
 }
 
 func TestGetCommentShouldHave404NotFoundWhenTopicIdIsNonExistent(t *testing.T) {
-	dbConn := db.Connect(testDbName)
+	dbConn := db.Connect()
 	defer dbConn.Close()
 	db.CreateTables(dbConn)
 

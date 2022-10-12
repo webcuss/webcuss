@@ -1,20 +1,37 @@
 # webcuss
 
-## Run Locally
-Requirements:
-* GoLang 1.19+
+## Stack & Libs
+1. Web framework - [Gin](https://github.com/gin-gonic/gin)
+2. Postgres driver - [Pgx](https://github.com/jackc/pgx)
+3. Postgres' cryptography extension - [pgcrypto](https://www.meetspaceapp.com/2016/04/12/passwords-postgresql-pgcrypto.html)
 
-## Migrate database
+## Requirements
+1. GoLang 1.19+
+
+## Migrate
 Create db tables
-```sh
+```shell
+export DATABASE_URL=postgres://postgres:postgres@localhost:5432/mydb
+
 go run main.go migrate
 # go run main.go migrate clear # delete all tables & indexes
 ```
 
-## Development
-```sh
+## Run
+```shell
+export APP_SECRET=*************
+export DATABASE_URL=postgres://postgres:postgres@localhost:5432/mydb
+
 go get ./...
 go run main.go
+```
+
+## Test
+```shell
+export APP_SECRET=*************
+export DATABASE_URL=postgres://postgres:postgres@localhost:5432/mydb
+
+go test
 ```
 
 ## Database
@@ -53,7 +70,7 @@ go run main.go
 | content   | string      |       |            |
 | createdOn | timestamp   | y     |            |
 
-## API Routes
+## API
 * `/sup` - Sign up
     * POST
         * body
@@ -182,5 +199,3 @@ go run main.go
                 ]
             }
             ```
-## Reference
-* [pgcrypto](https://www.meetspaceapp.com/2016/04/12/passwords-postgresql-pgcrypto.html)

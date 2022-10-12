@@ -5,12 +5,13 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"log"
 	"os"
+	"strings"
 )
 
-func Connect(dbName string) *pgxpool.Pool {
+func Connect() *pgxpool.Pool {
 	connString := os.Getenv("DATABASE_URL")
-	if connString == "" {
-		connString = "postgres://postgres:postgres@localhost:5432/" + dbName
+	if strings.TrimSpace(connString) == "" {
+		panic("Database URL not found")
 	}
 	dbpool, err := pgxpool.New(context.Background(), connString)
 	if err != nil {
