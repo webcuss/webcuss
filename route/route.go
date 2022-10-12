@@ -44,21 +44,7 @@ func SetupRouter(dbConn *pgxpool.Pool) *gin.Engine {
 	})
 
 	r.GET("/tpc/:topicId/cmt", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"id":  "",
-			"url": "",
-			"pg":  0,
-			"data": []gin.H{
-				{
-					"id":      "",
-					"comment": "",
-					"user": gin.H{
-						"id":   "",
-						"name": "",
-					},
-				},
-			},
-		})
+		cmtmgr.GetComments(c, dbConn)
 	})
 
 	r.POST("/cmt/:commentId", func(c *gin.Context) {
