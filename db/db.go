@@ -106,7 +106,7 @@ func CreateTables(db *pgxpool.Pool) {
 
 		CREATE TABLE IF NOT EXISTS comment (
 			"id" UUID NOT NULL DEFAULT gen_random_uuid(),
-			"topicId" UUID NOT NULL,
+			"topicId" UUID NULL,
 			"commentId" UUID NULL,
 			"userId" UUID NOT NULL,
 			"content" TEXT NOT NULL,

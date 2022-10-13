@@ -36,3 +36,11 @@ type PostCommentUri struct {
 type PostCommentReq struct {
 	Comment string `field:"comment" binding:"required"`
 }
+
+type PostReplyUri struct {
+	CommentId string `uri:"commentId" binding:"required"`
+}
+
+type PostReplyReq struct {
+	Comment string `field:"comment" binding:"required"`
+}
