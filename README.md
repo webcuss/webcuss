@@ -108,7 +108,6 @@ go test
         * returns 200 Ok
             ```json
             {
-                "pg": "number",
                 "data": [
                     {
                         "id": "string",
@@ -162,7 +161,6 @@ go test
         * returns 200 Ok
             ```json
             {
-                "pg": "number",
                 "data": [
                     {
                         "id": "string",
@@ -195,7 +193,6 @@ go test
         * returns 200 Ok
             ```json
             {
-                "pg": "number",
                 "data": [
                     {
                         "id": "string",
