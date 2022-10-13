@@ -156,3 +156,65 @@ func GetComments(c *gin.Context, dbConn *pgxpool.Pool) {
 		"data": result,
 	})
 }
+
+func PostReply(c *gin.Context, dbConn *pgxpool.Pool) {
+	var uri types.PostReplyUri
+	err := c.BindUri(&uri)
+	if err != nil {
+		c.String(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	var req types.PostReplyReq
+	err = c.Bind(&req)
+	if err != nil {
+		c.String(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	// validate commentId
+	if !isValidUUID(uri.CommentId) {
+		c.String(http.StatusBadRequest, "Invalid commentId")
+		return
+	}
+	sqlExists := `
+	SELECT EXISTS (
+		SELECT c.id
+		FROM comment c
+		WHERE c.id = $1
+	);
+	`
+	var exists bool
+	err = dbConn.QueryRow(context.Background(), sqlExists, uri.CommentId).Scan(&exists)
+	if err != nil {
+		log.Println("Failed to fetch comment, err=", err)
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+	if !exists {
+		c.String(http.StatusNotFound, "Comment not found")
+		return
+	}
+
+	user := c.MustGet("user").(types.Avatar)
+	userId := fmt.Sprintf("%x", user.Id.Bytes)
+
+	sqlInsert := `
+	INSERT INTO comment ("topicId", "commentId", "userId", "content", "createdOn")
+	VALUES ($1, $2, $3, $4, $5)
+	RETURNING id;
+	`
+
+	var commentId pgtype.UUID
+	err = dbConn.QueryRow(context.Background(), sqlInsert, nil, uri.CommentId, userId, req.Comment, time.Now().UTC()).
+		Scan(&commentId)
+	if err != nil {
+		log.Println("Failed to insert reply, err=", err.Error())
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"id": fmt.Sprintf("%x", commentId.Bytes),
+	})
+}

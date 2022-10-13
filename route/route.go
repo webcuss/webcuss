@@ -48,7 +48,7 @@ func SetupRouter(dbConn *pgxpool.Pool) *gin.Engine {
 	})
 
 	r.POST("/cmt/:commentId", func(c *gin.Context) {
-		c.String(http.StatusCreated, "Ok")
+		cmtmgr.PostReply(c, dbConn)
 	})
 
 	r.GET("/cmt/:commentId", func(c *gin.Context) {
