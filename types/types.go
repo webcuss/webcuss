@@ -29,7 +29,7 @@ type PostTopicReq struct {
 	Comment string `field:"comment"`
 }
 
-type PostCommentUri struct {
+type TopicCommentUri struct {
 	TopicId string `uri:"topicId" binding:"required"`
 }
 
@@ -37,7 +37,7 @@ type PostCommentReq struct {
 	Comment string `field:"comment" binding:"required"`
 }
 
-type PostReplyUri struct {
+type CommentReplyUri struct {
 	CommentId string `uri:"commentId" binding:"required"`
 }
 
