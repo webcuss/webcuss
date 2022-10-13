@@ -52,15 +52,7 @@ func SetupRouter(dbConn *pgxpool.Pool) *gin.Engine {
 	})
 
 	r.GET("/cmt/:commentId", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"pg": 0,
-			"data": []gin.H{
-				{
-					"comment": "",
-					"user":    gin.H{},
-				},
-			},
-		})
+		cmtmgr.GetReplies(c, dbConn)
 	})
 
 	r.NoRoute(func(c *gin.Context) {
