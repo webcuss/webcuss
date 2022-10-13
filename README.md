@@ -198,8 +198,13 @@ go test
                 "pg": "number",
                 "data": [
                     {
-                        "comment": "string",
-                        "user": { }
+                        "id": "string",
+                        "content": "string",
+                        "createdOn": "string",
+                        "user": {
+                            "id": "string",
+                            "uname": "string"
+                        }
                     }
                 ]
             }
