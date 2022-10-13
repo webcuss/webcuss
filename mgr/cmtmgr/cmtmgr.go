@@ -152,7 +152,6 @@ func GetComments(c *gin.Context, dbConn *pgxpool.Pool) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"pg":   1,
 		"data": result,
 	})
 }
@@ -300,7 +299,6 @@ func GetReplies(c *gin.Context, dbConn *pgxpool.Pool) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"pg":   1,
 		"data": result,
 	})
 }

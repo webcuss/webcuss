@@ -153,7 +153,6 @@ func GetTopic(c *gin.Context, dbConn *pgxpool.Pool) {
 	if err != nil {
 		log.Println("Failed to fetch topics, err=", err)
 		c.JSON(http.StatusOK, gin.H{
-			"pg":   1,
 			"data": make([]interface{}, 0),
 		})
 		return
@@ -190,7 +189,6 @@ func GetTopic(c *gin.Context, dbConn *pgxpool.Pool) {
 		result = append(result, m)
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"pg":   1,
 		"data": result,
 	})
 }
