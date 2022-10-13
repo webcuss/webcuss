@@ -16,8 +16,6 @@ import (
 	"time"
 )
 
-const testDbName = "webcuss"
-
 type ResAuthBody struct {
 	Token string `json:"token"`
 }
@@ -50,6 +48,10 @@ type ResTopicComment struct {
 type ResGetTopicComments struct {
 	Pg   int               `field:"pg"`
 	Data []ResTopicComment `field:"data"`
+}
+
+type ResPostReplyBody struct {
+	Id string `field:"id"`
 }
 
 func getRandInt() int {
@@ -487,4 +489,57 @@ func TestGetCommentShouldHave404NotFoundWhenTopicIdIsNonExistent(t *testing.T) {
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusNotFound, w.Code)
+}
+
+func TestPostReplyShouldHaveExpectedResult(t *testing.T) {
+	dbConn := db.Connect()
+	defer dbConn.Close()
+	db.CreateTables(dbConn)
+
+	router := route.SetupRouter(dbConn)
+
+	authToken := signUp(t, router, fmt.Sprintf("user%d", getRandInt()), "123456")
+
+	randHostname := "https://" + getRandomString() + ".example.com/category/blah/page.php?p1=abc&p2=123"
+	bodyPostTopic := gin.H{
+		"url":     randHostname,
+		"title":   "Lorem ipsum " + getRandomString(),
+		"comment": "random comment " + getRandomString(),
+	}
+	bPostTopic, _ := json.Marshal(bodyPostTopic)
+
+	wPostTopic := httptest.NewRecorder()
+	reqPostTopic, _ := http.NewRequest("POST", "/tpc", bytes.NewReader(bPostTopic))
+	reqPostTopic.Header.Set("Content-Type", "application/json")
+	reqPostTopic.Header.Set("Authorization", "Bearer "+authToken)
+	router.ServeHTTP(wPostTopic, reqPostTopic)
+
+	assert.Equal(t, http.StatusCreated, wPostTopic.Code)
+	assert.NotEmpty(t, wPostTopic.Body.String())
+
+	resPostTopic := ResPostTopicBody{}
+	_ = json.Unmarshal(wPostTopic.Body.Bytes(), &resPostTopic)
+
+	commentId := resPostTopic.CommentId
+
+	assert.NotEmpty(t, commentId)
+
+	// post reply
+	bodyPostReply := gin.H{
+		"comment": "I like it! " + getRandomString(),
+	}
+	bPostReply, _ := json.Marshal(bodyPostReply)
+
+	wPostReply := httptest.NewRecorder()
+	reqPostReply, _ := http.NewRequest("POST", fmt.Sprintf("/cmt/%s", commentId), bytes.NewReader(bPostReply))
+	reqPostReply.Header.Set("Content-Type", "application/json")
+	reqPostReply.Header.Set("Authorization", "Bearer "+authToken)
+	router.ServeHTTP(wPostReply, reqPostReply)
+
+	assert.Equal(t, http.StatusCreated, wPostReply.Code)
+
+	var resPostReply ResPostReplyBody
+	_ = json.Unmarshal(wPostReply.Body.Bytes(), &resPostReply)
+
+	assert.NotEmpty(t, resPostReply.Id)
 }
