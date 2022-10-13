@@ -180,10 +180,15 @@ go test
         * body
             ```json
             {
-                "message": "string"
+                "comment": "string"
             }
             ```
         * returns 201 Created
+            ```json
+            {
+                "id": "string"
+            }
+            ```
     * GET - get the replies of the comment
         * qs
             * `&pg` - page number
