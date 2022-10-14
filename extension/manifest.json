@@ -1,0 +1,15 @@
+{
+    "manifest_version": 3,
+    "name": "Webcuss",
+    "description": "Webcuss, comment everywhere!",
+    "version": "1.0",
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": "assets/icon16.png"
+    },
+    "icons": {
+        "16": "assets/icon16.png",
+        "48": "assets/icon48.png",
+        "128": "assets/icon128.png"
+    }
+}
