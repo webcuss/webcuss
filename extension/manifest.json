@@ -5,11 +5,15 @@
     "version": "1.0",
     "action": {
         "default_popup": "build/index.html",
-        "default_icon": "build/icon16.png"
+        "default_icon": "build/icon32.png"
     },
     "icons": {
         "16": "build/icon16.png",
+        "32": "build/icon32.png",
         "48": "build/icon48.png",
         "128": "build/icon128.png"
-    }
+    },
+    "permissions": [
+        "tabs"
+    ]
 }
