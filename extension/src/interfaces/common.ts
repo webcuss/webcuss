@@ -1,6 +1,6 @@
 import React from "react";
 
-export interface Props {
+export interface P {
     children?: React.ReactNode;
     className?: string;
 }
