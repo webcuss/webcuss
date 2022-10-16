@@ -7,7 +7,6 @@
     "@fortawesome/free-regular-svg-icons": "^6.2.0",
     "@fortawesome/free-solid-svg-icons": "^6.2.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
-    "@types/styled-components": "^5.1.26",
     "date-fns": "^2.29.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -24,7 +23,8 @@
     "@types/jest": "^27.5.2",
     "@types/node": "^16.11.65",
     "@types/react": "^18.0.21",
-    "@types/react-dom": "^18.0.6"
+    "@types/react-dom": "^18.0.6",
+    "@types/styled-components": "^5.1.26"
   },
   "scripts": {
     "start": "react-scripts start",
