@@ -7,7 +7,9 @@ interface T8yProps extends P {
 
 const T8y = (p: T8yProps) => {
     return (
-        <div>{p.text}</div>
+        <div className={[p.className].join(" ")}>
+            {p.text}
+        </div>
     );
 };
 
