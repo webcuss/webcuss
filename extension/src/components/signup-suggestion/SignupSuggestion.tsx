@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { useSignup } from "../../http";
 import { P } from "../../interfaces/common";
 import { randomNumber, randomString } from "../../utils/random";
 import Button from "../button/Button";
@@ -26,6 +27,8 @@ const SignupSuggestion = (p: SignupSuggestionProps) => {
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [error, setError] = useState<string|undefined>(undefined);
 
+    const signup = useSignup();
+
     useEffect(() => {
         if (username.length < 1) {
             setError("Username is required");
@@ -41,6 +44,13 @@ const SignupSuggestion = (p: SignupSuggestionProps) => {
     }, [username, password, confirmPassword]);
 
     const signupClickHandler = async () => {
+        const {token} = await signup.mutateAsync({
+            username: username,
+            password: password,
+        });
+        console.log({token});
+        
+        // download credentials
         const blob = new Blob(
             ["username: " + username, "\n", "password: " + password],
             {
