@@ -1,4 +1,4 @@
-import React, { HTMLInputTypeAttribute, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { P } from "../../interfaces/common";
 
@@ -9,15 +9,7 @@ interface InputProps extends P {
 }
 
 const Input = (p: InputProps) => {
-    const {value: pValue} = p;
-
-    const [value, setValue] = useState<string>(p.value || "");
-
-    useEffect(() => {
-        if (pValue) {
-            setValue(pValue);
-        }
-    }, [pValue]);
+    const {value} = p;
 
     const changeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (p.onChange) {

@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { P } from "../../interfaces/common";
 import { randomNumber, randomString } from "../../utils/random";
+import Button from "../button/Button";
 import Checkbox from "../checkbox/Checkbox";
 import Input from "../input/Input";
 import T8y from "../t8y/T8y";
@@ -22,8 +23,44 @@ const SignupSuggestion = (p: SignupSuggestionProps) => {
     const [username, setUsername] = useState<string>(randomUsername);
     const [password, setPassword] = useState<string>(randomPassword);
     const [confirmPassword, setConfirmPassword] = useState<string>(randomPassword);
-    const [passwordMatched, setPasswordMatched] = useState<boolean>(true);
     const [showPassword, setShowPassword] = useState<boolean>(false);
+    const [error, setError] = useState<string|undefined>(undefined);
+
+    useEffect(() => {
+        if (username.length < 1) {
+            setError("Username is required");
+        } else if (!(/^[a-z0-9]+$/i).test(username)) {
+            setError("Invalid username");
+        } else if (password !== confirmPassword) {
+            setError("Password didn't match");
+        } else if (password.length < 5) {
+            setError("Password too short");
+        } else {
+            setError(undefined);
+        }
+    }, [username, password, confirmPassword]);
+
+    const signupClickHandler = async () => {
+        const blob = new Blob(
+            ["username: " + username, "\n", "password: " + password],
+            {
+                type: "text/plain"
+            }
+        );
+        const url = URL.createObjectURL(blob);
+        chrome.downloads.download({
+            url: url,
+            filename: "credential.txt"
+        });
+    };
+
+    const generateClickHandler = () => {
+        setUsername(getRandomUsername());
+        const p = randomString(10);
+        setPassword(p);
+        setConfirmPassword(p);
+        setError(undefined);
+    };
 
     return (
         <Root className={["flex flex-col ai-center", p.className].join(" ")}>
@@ -43,7 +80,7 @@ const SignupSuggestion = (p: SignupSuggestionProps) => {
                             <T8y text="Password" />
                         </td>
                         <td className="ta-start">
-                            <Input type="password" value={password} onChange={v => setPassword(v)} />
+                            <Input type={showPassword ? "text" : "password"} value={password} onChange={v => setPassword(v)} />
                         </td>
                     </tr>
 
@@ -52,7 +89,7 @@ const SignupSuggestion = (p: SignupSuggestionProps) => {
                             <T8y text="Confirm password" />
                         </td>
                         <td className="ta-start">
-                            <Input type="password" value={confirmPassword} onChange={v => setConfirmPassword(v)} />
+                            <Input type={showPassword ? "text" : "password"} value={confirmPassword} onChange={v => setConfirmPassword(v)} />
                         </td>
                     </tr>
 
@@ -62,6 +99,24 @@ const SignupSuggestion = (p: SignupSuggestionProps) => {
                             <Checkbox label="Show password" checked={showPassword} onChange={v => setShowPassword(v)} />
                         </td>
                     </tr>
+
+                    <tr>
+                        <td className="ta-end">
+                            <Button text="Signup" enabled={!error} onClick={signupClickHandler} />
+                        </td>
+                        <td className="ta-start">
+                            <Button text="Generate" onClick={generateClickHandler} />
+                        </td>
+                    </tr>
+
+                    {error && (
+                        <tr>
+                            <td></td>
+                            <td className="ta-start">
+                                <T8y className="color-error" text={error} />
+                            </td>
+                        </tr>
+                    )}
                 </tbody>
             </Table>
         </Root>
