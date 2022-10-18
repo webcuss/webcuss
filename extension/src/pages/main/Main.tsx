@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import C5t from "../../components/c5t/C5t";
 import PageInfo from "../../components/page-info/PageInfo";
+import SignupSuggestion from "../../components/signup-suggestion/SignupSuggestion";
 import T8y from "../../components/t8y/T8y";
 import { IC5t } from "../../interfaces/model";
 
@@ -57,23 +58,34 @@ const data: IC5t[] = [
     },
 ];
 
-const Root = styled.div`
-    height: calc(var(--html-height) - var(--body-padding-top) - var(--body-padding-bottom));
-    overflow-y: auto;
-`;
-
 const Main = () => {
+    const [isSignedIn, setIsSignedIn] = useState<boolean>(false);
     const [comments] = useState<IC5t[]>(data);
 
     return (
         <Root>
             <T8y text={comments.length + " comments"} />
-            {comments.map((c, i) => <C5t key={i} data={c} />)}
-
-            {"--------------------------------"}
-            <PageInfo />
+            {isSignedIn && (
+                <>
+                    {comments.map((c, i) => <C5t key={i} data={c} />)}
+        
+                    {"--------------------------------"}
+                    <PageInfo />
+                </>
+            )}
+            {!isSignedIn && (
+                <div className="mt-20">
+                    <T8y text="Complete your profile to add comments" />
+                    <SignupSuggestion className="mt-10" />
+                </div>
+            )}
         </Root>
     );
 };
 
 export default Main;
+
+const Root = styled.div`
+    height: calc(var(--html-height) - var(--body-padding-top) - var(--body-padding-bottom));
+    overflow-y: auto;
+`;
