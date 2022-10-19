@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useSignup } from "../../http";
 import { P } from "../../interfaces/common";
+import { downloadCredential } from "../../utils/download";
 import { randomNumber, randomString } from "../../utils/random";
+import { storageSetValue } from "../../utils/storage";
 import Button from "../button/Button";
 import Checkbox from "../checkbox/Checkbox";
 import Input from "../input/Input";
@@ -26,6 +28,7 @@ const SignupSuggestion = (p: SignupSuggestionProps) => {
     const [confirmPassword, setConfirmPassword] = useState<string>(randomPassword);
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [error, setError] = useState<string|undefined>(undefined);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const signup = useSignup();
 
@@ -44,27 +47,35 @@ const SignupSuggestion = (p: SignupSuggestionProps) => {
     }, [username, password, confirmPassword]);
 
     const signupClickHandler = async () => {
-        const {token} = await signup.mutateAsync({
-            username: username,
-            password: password,
-        });
-        console.log({token});
+        if (isLoading) {
+            return;
+        }
+
+        setIsLoading(true);
+        try {
+            const {token} = await signup.mutateAsync({
+                username: username,
+                password: password,
+            });
+
+            await storageSetValue({token: token});
         
-        // download credentials
-        const blob = new Blob(
-            ["username: " + username, "\n", "password: " + password],
-            {
-                type: "text/plain"
+            // download credentials
+            downloadCredential(username, password);
+        } catch (e: any) {
+            if (e.response?.status === 409) {
+                setError("Username already taken");
             }
-        );
-        const url = URL.createObjectURL(blob);
-        chrome.downloads.download({
-            url: url,
-            filename: "credential.txt"
-        });
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const generateClickHandler = () => {
+        if (isLoading) {
+            return;
+        }
+        
         setUsername(getRandomUsername());
         const p = randomString(10);
         setPassword(p);
@@ -129,6 +140,10 @@ const SignupSuggestion = (p: SignupSuggestionProps) => {
                     )}
                 </tbody>
             </Table>
+                
+            <div className="w-full flex flex-row jc-center mt-20">
+                <T8y text="Note: Your credential will be downloaded on this device after you signed up." />
+            </div>
         </Root>
     );
 };
