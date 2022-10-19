@@ -18,7 +18,7 @@ func SetupRouter(dbConn *pgxpool.Pool) *gin.Engine {
 	r := gin.Default()
 
 	// middleware
-	r.Use(m8e.Cors())
+	r.Use(m8e.CORS())
 	r.Use(m8e.A11r(dbConn))
 
 	r.POST("/sup", func(c *gin.Context) {

@@ -64,14 +64,17 @@ func A11r(db *pgxpool.Pool) gin.HandlerFunc {
 	}
 }
 
-func Cors() gin.HandlerFunc {
+func CORS() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Header("Access-Control-Allow-Origin", "*")
-		c.Header("Access-Control-Allow-Credentials", "true")
-		c.Header("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
-		c.Header("Access-Control-Allow-Methods", "POST, HEAD, PATCH, OPTIONS, GET, PUT")
+		reqOrigin := c.Request.Header["Origin"]
+		if len(reqOrigin) > 0 {
+			c.Header("Access-Control-Allow-Origin", reqOrigin[0])
+			c.Header("Access-Control-Allow-Credentials", "true")
+			c.Header("Access-Control-Allow-Headers", "Content-Type, Content-Length, Authorization, Accept, Origin, Access-Control-Allow-Credentials")
+			c.Header("Access-Control-Allow-Methods", "POST, PATCH, OPTIONS, GET, PUT")
+		}
 
-		if c.Request.Method == "OPTIONS" {
+		if c.Request.Method == http.MethodOptions {
 			c.AbortWithStatus(http.StatusNoContent)
 			return
 		}
