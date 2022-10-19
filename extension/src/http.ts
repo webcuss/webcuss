@@ -1,15 +1,15 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { useQuery, useMutation } from '@tanstack/react-query';
 
-const backendUrl = "http://localhost:8080";
+const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
 const config: AxiosRequestConfig = {
-    withCredentials: false,
+    withCredentials: true,
     baseURL: backendUrl,
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
-    //   'Access-Control-Allow-Credentials': 'true',
+      'Access-Control-Allow-Credentials': 'true',
     },
 };
 
