@@ -4,16 +4,17 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/stretchr/testify/assert"
-	"github.com/webcuss/webcuss/db"
-	"github.com/webcuss/webcuss/route"
 	"log"
 	"math/rand"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
+	"github.com/webcuss/webcuss/db"
+	"github.com/webcuss/webcuss/route"
 )
 
 type ResAuthBody struct {

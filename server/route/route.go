@@ -1,9 +1,10 @@
 package route
 
 import (
+	"net/http"
+
 	"github.com/webcuss/webcuss/mgr/cmtmgr"
 	"github.com/webcuss/webcuss/mgr/tpcmgr"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -17,6 +18,7 @@ func SetupRouter(dbConn *pgxpool.Pool) *gin.Engine {
 	r := gin.Default()
 
 	// middleware
+	r.Use(m8e.CORS())
 	r.Use(m8e.A11r(dbConn))
 
 	r.POST("/sup", func(c *gin.Context) {
