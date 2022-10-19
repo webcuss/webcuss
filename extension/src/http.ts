@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { useQuery, useMutation } from '@tanstack/react-query';
+import { storageGetValue } from "./utils/storage";
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
@@ -15,10 +16,19 @@ const config: AxiosRequestConfig = {
 
 const http = axios.create(config);
 
-http.interceptors.request.use((conf) => {
-    return {
-        ...conf,
-    };
+http.interceptors.request.use(async (conf) => {
+    let c = { ...conf };
+    const token = await storageGetValue("token");
+    if (token) {
+        c = {
+            ...c,
+            headers: {
+                ...c.headers,
+                Authorization: "Bearer " + token,
+            }
+        }
+    }
+    return c;
 });
 
 interface ISignupResponse {

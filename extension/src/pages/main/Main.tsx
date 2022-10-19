@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import C5t from "../../components/c5t/C5t";
 import PageInfo from "../../components/page-info/PageInfo";
 import SignupSuggestion from "../../components/signup-suggestion/SignupSuggestion";
 import T8y from "../../components/t8y/T8y";
+import { useAuth } from "../../hooks/useAuth";
 import { IC5t } from "../../interfaces/model";
 
 const data: IC5t[] = [
@@ -59,8 +60,14 @@ const data: IC5t[] = [
 ];
 
 const Main = () => {
-    const [isSignedIn, setIsSignedIn] = useState<boolean>(false);
+    const {isSignedIn: hIsSignedIn} = useAuth();
+
+    const [isSignedIn, setIsSignedIn] = useState<boolean>(hIsSignedIn);
     const [comments] = useState<IC5t[]>(data);
+
+    useEffect(() => {
+        setIsSignedIn(hIsSignedIn);
+    }, [hIsSignedIn]);
 
     return (
         <Root>

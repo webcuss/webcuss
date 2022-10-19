@@ -3,10 +3,11 @@ package authmgr
 import (
 	"context"
 	"fmt"
-	"github.com/jackc/pgx/v5/pgtype"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/jackc/pgx/v5/pgtype"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
@@ -18,7 +19,7 @@ import (
 func createAuthToken(userId string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"aud": strings.ReplaceAll(userId, "-", ""),
-		"exp": time.Now().Add(time.Hour * 24).Unix(),
+		"exp": time.Now().Add(time.Hour * 8760).Unix(), //8760 total hours of a year
 	})
 	tokenString, err := token.SignedString(config.GetSecret())
 	if err != nil {
