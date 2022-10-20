@@ -14,3 +14,7 @@ export const storageGetValue = async (key: string): Promise<string|undefined> =>
         });
     });
 };
+
+export const storageRemoveValue = (key: string|string[]): Promise<void> => {
+    return chrome.storage.sync.remove(key);
+};
