@@ -93,6 +93,6 @@ const Main = () => {
 export default Main;
 
 const Root = styled.div`
-    height: calc(var(--html-height) - var(--body-padding-top) - var(--body-padding-bottom));
+    height: calc(var(--html-height) - var(--body-padding-top) - var(--body-padding-bottom) - 100px);
     overflow-y: auto;
 `;

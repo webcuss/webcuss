@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import styled from 'styled-components';
+import DevToolStorageManager from './components/devtool-storage-manager/DevToolStorageManager';
 import About from './pages/about/About';
 import Main from './pages/main/Main';
 import Preference from './pages/preference/Preference';
@@ -13,18 +15,39 @@ enum Route {
 const App = () => {
   const [route, setRoute] = useState<Route>(Route.Main);
 
+  let page = (<></>);
+
   switch (route) {
     case Route.Main:
-      return (<Main />);
+      page = (<Main />);
+      break;
     case Route.About:
-      return (<About />);
+      page = (<About />);
+      break;
     case Route.Preference:
-      return (<Preference />);
+      page = (<Preference />);
+      break;
     default:
-      return (
+      page = (
         <div>Let's webcuss!</div>
       );
   }
+
+  return (
+    <>
+      {page}
+
+      <DevTools>
+        <DevToolStorageManager />
+      </DevTools>
+    </>
+  );
 }
 
 export default App;
+
+const DevTools = styled.div`
+  height: 100px;
+  border-top: 1px dotted black;
+  overflow-y: auto;
+`;
