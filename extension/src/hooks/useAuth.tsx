@@ -18,6 +18,12 @@ export const AuthProvider = (p: P) => {
             const token = await storageGetValue("token");
             setIsSignedIn(!!token);
         })();
+
+        chrome.storage.sync.onChanged.addListener(({token}) => {
+            if (token) {
+                setIsSignedIn(!!token.newValue);
+            }
+        });
     }, []);
 
     return (
