@@ -151,7 +151,7 @@ const SignupSuggestion = (p: SignupSuggestionProps) => {
 export default SignupSuggestion;
 
 const getRandomUsername = ():  string => {
-    const name = animals[randomNumber(0, animals.length)].toLocaleLowerCase();
+    const name = animals[randomNumber(0, animals.length)].replace(/ /g, "").toLocaleLowerCase();
     const unique = randomNumber(1000, 9999);
     return name + unique;
 };
