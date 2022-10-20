@@ -72,11 +72,11 @@ const Main = () => {
     return (
         <Root>
             <T8y text={comments.length + " comments"} />
+
             {isSignedIn && (
                 <>
                     {comments.map((c, i) => <C5t key={i} data={c} />)}
         
-                    {"--------------------------------"}
                     <PageInfo />
                 </>
             )}

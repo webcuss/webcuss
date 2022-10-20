@@ -16,6 +16,10 @@ const DevToolStorageManager = () => {
 
     useEffect(() => {
         refreshStorage();
+
+        chrome.storage.sync.onChanged.addListener(() => {
+            refreshStorage();
+        });
     }, []);
 
     const refreshStorage = () => {
@@ -38,12 +42,12 @@ const DevToolStorageManager = () => {
 
     return (
         <Root>
-            <T8y text="chrome.storage.sync:" />
+            <T8y text="chrome.storage.sync" />
             <table>
                 <tbody>
                     {entries.map((v, i) => (
                         <tr key={i}>
-                            <td>{v.entryKey}{": "}</td>
+                            <td>{v.entryKey}</td>
                             <td>{v.entryValue}</td>
                             <td>
                                 <FontAwesomeIcon className="btn-delete" icon={faTrash} onClick={() => deleteHandler(v.entryKey)} />
@@ -59,6 +63,16 @@ const DevToolStorageManager = () => {
 export default DevToolStorageManager;
 
 const Root = styled.div`
+    & table {
+        table-layout: fixed;
+        width: 100%;
+    }
+
+    & table td {
+        word-wrap: break-word;         /* All browsers since IE 5.5+ */
+        overflow-wrap: break-word;     /* Renamed property in CSS3 draft spec */
+    }
+
     & .btn-delete:hover {
         cursor: pointer;
     }
