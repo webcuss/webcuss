@@ -35,5 +35,6 @@ jobs:
       - name: "Run tests"
         env:
           DATABASE_URL: postgres://${{ env.PG_USER }}:${{ env.PG_PASSWORD }}@localhost:5432/${{ env.PG_DATABASE }}
+          APP_SECRET: ajfUHFfjkaUjhfYAS98*AhffiAasu8OusaUV*ahfq
         run: "go test"
         working-directory: ${{ env.BACKEND_WORK_DIR }}
