@@ -24,4 +24,4 @@ jobs:
         with:
           context: ${{ env.BACKEND_WORK_DIR }}
           push: true
-          tags: webcuss:${{ github.sha }},webcuss:latest
+          tags: devsareno/webcuss:${{ github.sha }},devsareno/webcuss:latest
