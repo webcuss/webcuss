@@ -1,0 +1,40 @@
+on:
+  - push
+env:
+  BACKEND_WORK_DIR: ${{ github.workspace }}/server
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      PG_USER: postgres
+      PG_PASSWORD: postgres
+      PG_DATABASE: webcuss
+    services:
+      postgres:
+        # PostgreSQL v14
+        image: postgres:14-alpine
+        env:
+          POSTGRES_USER: ${{ env.PG_USER }}
+          POSTGRES_PASSWORD: ${{ env.PG_PASSWORD }}
+          POSTGRES_DB: ${{ env.PG_DATABASE }}
+        ports:
+          - 5432:5432
+        # Ensure Postgres is ready
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Golang
+        uses: actions/setup-go@v3
+        with:
+          go-version: '>=1.19.2'
+      - name: "Run tests"
+        env:
+          DATABASE_URL: postgres://${{ env.PG_USER }}:${{ env.PG_PASSWORD }}@localhost:5432/${{ env.PG_DATABASE }}
+          APP_SECRET: ajfUHFfjkaUjhfYAS98*AhffiAasu8OusaUV*ahfq
+        run: "go test"
+        working-directory: ${{ env.BACKEND_WORK_DIR }}

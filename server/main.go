@@ -1,14 +1,22 @@
 package main
 
 import (
-	"github.com/webcuss/webcuss/db/migrate"
+	"log"
 	"os"
+	"strings"
+
+	"github.com/webcuss/webcuss/db/migrate"
 
 	"github.com/webcuss/webcuss/db"
 	"github.com/webcuss/webcuss/route"
 )
 
 func main() {
+	appSecret := os.Getenv("APP_SECRET")
+	if len(strings.TrimSpace(appSecret)) < 1 {
+		log.Fatalln("APP_SECRET environment variable is missing")
+	}
+
 	dbConn := db.Connect()
 	defer dbConn.Close()
 
@@ -21,6 +29,6 @@ func main() {
 
 	err := r.Run(":8080")
 	if err != nil {
-		os.Exit(1)
+		log.Fatalln("Application cannot start, err=", err)
 	}
 }
