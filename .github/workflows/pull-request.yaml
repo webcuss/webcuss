@@ -1,5 +1,5 @@
 on:
-  - push
+  - pull_request
 env:
   BACKEND_WORK_DIR: ${{ github.workspace }}/server
 jobs:
