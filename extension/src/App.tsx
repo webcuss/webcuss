@@ -35,6 +35,7 @@ const App = () => {
 
   return (
     <>
+    <div>main | page-info | storage</div>
       {page}
 
       <DevTools>
