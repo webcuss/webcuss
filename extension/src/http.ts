@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { storageGetValue } from "./utils/storage";
-import { IGetTopicsResponse } from "./interfaces/model";
+import { IGetTopicsResponse, ISignupResponse } from "./interfaces/model";
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
@@ -31,10 +31,6 @@ http.interceptors.request.use(async (conf) => {
     }
     return c;
 });
-
-interface ISignupResponse {
-    token: string;
-}
 
 export const useSignup = () => {
     return useMutation(["signup"], async (params: {
