@@ -23,3 +23,12 @@ export interface ITopic {
 export interface IGetTopicsResponse {
     data: ITopic[];
 }
+
+export interface ISignupResponse {
+    token: string;
+}
+
+export interface ICreateTopicResponse {
+    id: string;
+    commentId?: string;
+}

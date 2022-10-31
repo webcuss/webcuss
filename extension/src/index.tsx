@@ -9,6 +9,7 @@ import {
 } from '@tanstack/react-query';
 import { AuthProvider } from './hooks/useAuth';
 import { DebugProvider } from './hooks/useDebug';
+import { BrowserExtensionProvider } from './hooks/useBrowserExtension';
 
 const queryClient = new QueryClient();
 
@@ -20,7 +21,9 @@ root.render(
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <DebugProvider>
-          <App />
+          <BrowserExtensionProvider>
+            <App />
+          </BrowserExtensionProvider>
         </DebugProvider>
       </AuthProvider>
     </QueryClientProvider>
