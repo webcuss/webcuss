@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
+import React, { useEffect, useState } from 'react';
+import DebugTabs from './components/debug-tabs/DebugTabs';
 import DevToolStorageManager from './components/devtool-storage-manager/DevToolStorageManager';
+import PageInfo from './components/page-info/PageInfo';
+import { useDebug } from './hooks/useDebug';
 import About from './pages/about/About';
 import Main from './pages/main/Main';
 import Preference from './pages/preference/Preference';
@@ -13,42 +15,62 @@ enum Route {
 }
 
 const App = () => {
+  const {isDebugging: pIsDebugging} = useDebug();
+
   const [route, setRoute] = useState<Route>(Route.Main);
+  const [activePageIndex, setActivePageIndex] = useState<number>(0);
+  const [isDebugging, setIsDebugging] = useState<boolean>(pIsDebugging);
 
-  let page = (<></>);
+  useEffect(() => {
+    setIsDebugging(pIsDebugging);
+    if (!pIsDebugging) {
+      setActivePageIndex(0);
+    }
+  }, [pIsDebugging]);
 
-  switch (route) {
-    case Route.Main:
-      page = (<Main />);
+  const debugActiveTabChangeHandler = (tabIndex: number) => {
+    setActivePageIndex(tabIndex);
+  };
+
+  let rootPage = (<></>);
+  switch (activePageIndex) {
+    case 0:
+      let mainPage = (<></>);
+      switch (route) {
+        case Route.Main:
+          mainPage = (<Main />);
+          break;
+        case Route.About:
+          mainPage = (<About />);
+          break;
+        case Route.Preference:
+          mainPage = (<Preference />);
+          break;
+        default:
+          mainPage = (
+            <div>Let's webcuss!</div>
+          );
+      }
+      rootPage = (<>{mainPage}</>);
       break;
-    case Route.About:
-      page = (<About />);
+    case 1:
+      rootPage = (<>
+        <PageInfo />
+      </>);
       break;
-    case Route.Preference:
-      page = (<Preference />);
+    case 2:
+      rootPage = (<>
+        <DevToolStorageManager />
+      </>);
       break;
-    default:
-      page = (
-        <div>Let's webcuss!</div>
-      );
   }
 
   return (
     <>
-    <div>main | page-info | storage</div>
-      {page}
-
-      <DevTools>
-        <DevToolStorageManager />
-      </DevTools>
+      {isDebugging && (<DebugTabs onActiveTabChanged={debugActiveTabChangeHandler} />)}
+      {rootPage}
     </>
   );
 }
 
 export default App;
-
-const DevTools = styled.div`
-  height: 100px;
-  border-top: 1px dotted black;
-  overflow-y: auto;
-`;
