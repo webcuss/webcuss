@@ -22,7 +22,7 @@ func SetupRouter(dbConn *pgxpool.Pool) *gin.Engine {
 	r.Use(m8e.A11r(dbConn))
 
 	r.GET("/", func(c *gin.Context) {
-		c.String(http.StatusOK, "Welcome to Webcuss API!")
+		c.String(http.StatusOK, "Welcome to Webcuss API! 🚀")
 	})
 
 	r.POST("/sup", func(c *gin.Context) {
