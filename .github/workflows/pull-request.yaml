@@ -3,8 +3,23 @@ on:
 env:
   BACKEND_WORK_DIR: ${{ github.workspace }}/server
 jobs:
+  path-filter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            server-changes:
+              - 'server/**'
+    outputs:
+      server-filter: ${{ steps.changes.outputs.server-changes }}
   test:
     runs-on: ubuntu-latest
+    needs: path-filter
+    if: needs.path-filter.outputs.server-filter == 'true'
     env:
       PG_USER: postgres
       PG_PASSWORD: postgres
