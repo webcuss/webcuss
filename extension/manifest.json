@@ -17,5 +17,11 @@
         "tabs",
         "downloads",
         "storage"
-    ]
+    ],
+    "commands": {
+        "toggle-feature-debug": {
+          "suggested_key": "Ctrl+Shift+Comma",
+          "description": "Toggle feature debug"
+        }
+      }
 }

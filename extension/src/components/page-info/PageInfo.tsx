@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
 
 const PageInfo = () => {
     const [url, setUrl] = useState<string>("");
@@ -36,19 +35,15 @@ const PageInfo = () => {
     }, []);
 
     return (
-        <Root>
+        <div>
             <div>URL: {url}</div>
             <div>Title: {title}</div>
             <div>Scheme: {scheme}</div>
             <div>Hostname: {hostname}</div>
             <div>Path: {path}</div>
             <div>Query: {query}</div>
-        </Root>
+        </div>
     );
 };
 
 export default PageInfo;
-
-const Root = styled.div`
-    border-top: 1px dotted black;
-`;

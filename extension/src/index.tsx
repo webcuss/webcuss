@@ -8,6 +8,7 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query';
 import { AuthProvider } from './hooks/useAuth';
+import { DebugProvider } from './hooks/useDebug';
 
 const queryClient = new QueryClient();
 
@@ -18,7 +19,9 @@ root.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <App />
+        <DebugProvider>
+          <App />
+        </DebugProvider>
       </AuthProvider>
     </QueryClientProvider>
   </React.StrictMode>

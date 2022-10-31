@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import C5t from "../../components/c5t/C5t";
-import PageInfo from "../../components/page-info/PageInfo";
 import SignupSuggestion from "../../components/signup-suggestion/SignupSuggestion";
 import T8y from "../../components/t8y/T8y";
 import { useAuth } from "../../hooks/useAuth";
@@ -76,8 +75,6 @@ const Main = () => {
             {isSignedIn && (
                 <>
                     {comments.map((c, i) => <C5t key={i} data={c} />)}
-        
-                    <PageInfo />
                 </>
             )}
             {!isSignedIn && (
@@ -93,6 +90,6 @@ const Main = () => {
 export default Main;
 
 const Root = styled.div`
-    height: calc(var(--html-height) - var(--body-padding-top) - var(--body-padding-bottom) - 100px);
+    height: calc(var(--html-height) - var(--body-padding-top) - var(--body-padding-bottom));
     overflow-y: auto;
 `;
