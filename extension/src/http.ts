@@ -1,6 +1,7 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { storageGetValue } from "./utils/storage";
+import { IGetTopicsResponse } from "./interfaces/model";
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
@@ -45,5 +46,14 @@ export const useSignup = () => {
             pword: params.password,
         });
         return response.data;
+    });
+};
+
+
+
+export const useGetTopics = () => {
+    return useQuery(["get-topics"], async () => {
+        const {data} = await http.get<IGetTopicsResponse>("/tpc");
+        return data;
     });
 };
