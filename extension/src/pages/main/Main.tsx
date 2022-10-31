@@ -4,6 +4,8 @@ import C5t from "../../components/c5t/C5t";
 import SignupSuggestion from "../../components/signup-suggestion/SignupSuggestion";
 import T8y from "../../components/t8y/T8y";
 import { useAuth } from "../../hooks/useAuth";
+import { useBrowserExtension } from "../../hooks/useBrowserExtension";
+import { useCreateTopic } from "../../http";
 import { IC5t } from "../../interfaces/model";
 
 const data: IC5t[] = [
@@ -67,13 +69,37 @@ const data: IC5t[] = [
 
 const Main = () => {
     const {isSignedIn: hIsSignedIn} = useAuth();
+    const {chromeExt} = useBrowserExtension();
+
+    const createTopic = useCreateTopic();
 
     const [isSignedIn, setIsSignedIn] = useState<boolean>(hIsSignedIn);
+    const [topicId, setTopicId] = useState<string|undefined>(undefined);
     const [comments] = useState<IC5t[]>(data);
 
     useEffect(() => {
         setIsSignedIn(hIsSignedIn);
     }, [hIsSignedIn]);
+
+    useEffect(() => {
+        (async () => {
+            const pUrl = await chromeExt.getPageUrl();
+            const pTitle = await chromeExt.getPageTitle();
+            if (pUrl && pTitle) {
+                const res = await createTopic.mutateAsync({
+                    url: pUrl,
+                    title: pTitle,
+                });
+                setTopicId(res.id);
+            }
+        })();
+    }, [chromeExt]);
+
+    useEffect(() => {
+        if (topicId) {
+            console.log("topic id: " + topicId);
+        }
+    }, [topicId]);
 
     return (
         <Root>

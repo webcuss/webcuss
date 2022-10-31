@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { storageGetValue } from "./utils/storage";
-import { IGetTopicsResponse, ISignupResponse } from "./interfaces/model";
+import { ICreateTopicResponse, IGetTopicsResponse, ISignupResponse } from "./interfaces/model";
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
@@ -33,7 +33,7 @@ http.interceptors.request.use(async (conf) => {
 });
 
 export const useSignup = () => {
-    return useMutation(["signup"], async (params: {
+    return useMutation(["post-signup"], async (params: {
         username: string,
         password: string,
     }) => {
@@ -50,6 +50,27 @@ export const useSignup = () => {
 export const useGetTopics = () => {
     return useQuery(["get-topics"], async () => {
         const {data} = await http.get<IGetTopicsResponse>("/tpc");
+        return data;
+    });
+};
+
+export const useCreateTopic = () => {
+    return useMutation(["post-create-topic"], async (params: {
+        url: string,
+        title: string,
+        comment?: string,
+    }) => {
+        let body: any = {
+            url: params.url,
+            title: params.title,
+        }
+        if (params.comment) {
+            body = {
+                ...body,
+                comment: params.comment,
+            };
+        }
+        const {data} = await http.post<ICreateTopicResponse>("/tpc", body);
         return data;
     });
 };

@@ -27,3 +27,8 @@ export interface IGetTopicsResponse {
 export interface ISignupResponse {
     token: string;
 }
+
+export interface ICreateTopicResponse {
+    id: string;
+    commentId?: string;
+}
