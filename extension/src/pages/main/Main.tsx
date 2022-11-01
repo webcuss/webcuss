@@ -5,77 +5,27 @@ import SignupSuggestion from "../../components/signup-suggestion/SignupSuggestio
 import T8y from "../../components/t8y/T8y";
 import { useAuth } from "../../hooks/useAuth";
 import { useBrowserExtension } from "../../hooks/useBrowserExtension";
-import { useCreateTopic } from "../../http";
+import { useCreateTopic, useGetComments } from "../../http";
 import { IC5t } from "../../interfaces/model";
-
-const data: IC5t[] = [
-    {
-        comment: "this is great! I like birds",
-        createdOn: "2021-09-29T13:08:26.000Z",
-        user: {
-            uname: "dan",
-            id: ""
-        }
-    },
-    {
-        comment: "cute birds",
-        createdOn: "2021-09-29T13:08:26.000Z",
-        user: {
-            uname: "john",
-            id: ""
-        }
-    },
-    {
-        comment: "the second bird is adorable",
-        createdOn: "2021-09-29T13:08:26.000Z",
-        user: {
-            uname: "benten",
-            id: ""
-        },
-    },
-    {
-        comment: "the crow is thug life haha",
-        createdOn: "2021-09-29T13:08:26.000Z",
-        user: {
-            uname: "jim",
-            id: ""
-        },
-    },
-    {
-        comment: "the crow 😂",
-        createdOn: "2021-09-29T13:08:26.000Z",
-        user: {
-            uname: "nathan",
-            id: ""
-        }
-    },
-    {
-        comment: "eagleeeee",
-        createdOn: "2021-09-29T13:08:26.000Z",
-        user: {
-            uname: "shim",
-            id: ""
-        }
-    },
-    {
-        comment: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi deleniti sint fuga, voluptatibus impedit qui ipsam id magnam esse debitis nobis maxime iure quo consequatur assumenda minima hic at voluptatem?",
-        createdOn: "2021-09-29T13:08:26.000Z",
-        user: {
-            uname: "felix",
-            id: ""
-        }
-    },
-];
+import { b } from "../../utils/bool";
+import { s } from "../../utils/string";
 
 const Main = () => {
     const {isSignedIn: hIsSignedIn} = useAuth();
     const {chromeExt} = useBrowserExtension();
-
     const createTopic = useCreateTopic();
 
     const [isSignedIn, setIsSignedIn] = useState<boolean>(hIsSignedIn);
     const [topicId, setTopicId] = useState<string|undefined>(undefined);
-    const [comments] = useState<IC5t[]>(data);
+    const [comments, setComments] = useState<IC5t[]>([]);
+
+    const {data: hComments} = useGetComments(s(topicId), b(topicId));
+
+    useEffect(() => {
+        if (hComments && hComments.data) {
+            setComments(hComments.data);
+        }
+    }, [hComments]);
 
     useEffect(() => {
         setIsSignedIn(hIsSignedIn);
@@ -94,12 +44,6 @@ const Main = () => {
             }
         })();
     }, [chromeExt]);
-
-    useEffect(() => {
-        if (topicId) {
-            console.log("topic id: " + topicId);
-        }
-    }, [topicId]);
 
     return (
         <Root>
