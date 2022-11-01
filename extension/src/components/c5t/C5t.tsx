@@ -16,8 +16,7 @@ const C5t = (p: C5tProps) => {
         <Root>
             <div>
                 <b>{p.data.user.uname + " "}</b>
-                {/* <StyleDate>{format(parseISO(p.data.createdOn), "MM/dd/yyyy")}</StyleDate> */}
-                <StyleDate>{format(new Date(), "MM/dd/yyyy")}</StyleDate>
+                <StyleDate>{format(parseISO(p.data.createdOn), "MM/dd/yyyy")}</StyleDate>
             </div>
 
             <div>{p.data.content}</div>
