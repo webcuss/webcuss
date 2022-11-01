@@ -263,7 +263,8 @@ func GetReplies(c *gin.Context, dbConn *pgxpool.Pool) {
 	a."uname"
 	FROM comment c
 	INNER JOIN avatar a ON a."id" = c."userId"
-	WHERE c."commentId" = $1;
+	WHERE c."commentId" = $1
+	ORDER BY c."createdOn" DESC;
 	`
 
 	type CommentWithUser struct {
