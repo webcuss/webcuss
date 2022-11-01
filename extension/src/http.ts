@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { storageGetValue } from "./utils/storage";
-import { IAddCommentResponse, ICreateTopicResponse, IGetCommentsResponse, IGetRepliesResponse, IGetTopicsResponse, ISignupResponse } from "./interfaces/model";
+import { IAddCommentResponse, IAddReplyResponse, ICreateTopicResponse, IGetCommentsResponse, IGetRepliesResponse, IGetTopicsResponse, ISignupResponse } from "./interfaces/model";
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
@@ -107,5 +107,22 @@ export const useGetReplies = (commentId: string) => {
         const url = `/cmt/${commentId}`;
         const {data} = await http.get<IGetRepliesResponse>(url);
         return data;
+    });
+};
+
+export const useAddReply = (commentId: string) => {
+    const queryClient = useQueryClient();
+    return useMutation(["post-add-reply", commentId], async (params: {
+        comment: string,
+    }) => {
+        const url = `/cmt/${commentId}`;
+        const {data} = await http.post<IAddReplyResponse>(url, {
+            comment: params.comment,
+        });
+        return data;
+    }, {
+        onSuccess: () => {
+            queryClient.invalidateQueries(["get-replies", commentId]);
+        }
     });
 };
