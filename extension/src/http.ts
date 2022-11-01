@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { storageGetValue } from "./utils/storage";
-import { ICreateTopicResponse, IGetTopicsResponse, ISignupResponse } from "./interfaces/model";
+import { ICreateTopicResponse, IGetCommentsResponse, IGetTopicsResponse, ISignupResponse } from "./interfaces/model";
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
@@ -72,5 +72,15 @@ export const useCreateTopic = () => {
         }
         const {data} = await http.post<ICreateTopicResponse>("/tpc", body);
         return data;
+    });
+};
+
+export const useGetComments = (topicId: string, enabled: boolean = true) => {
+    return useQuery(["get-comments", topicId], async () => {
+        const url = `/topic/${topicId}/cmt`;
+        const {data} = await http.get<IGetCommentsResponse>(url);
+        return data;
+    }, {
+        enabled: enabled,
     });
 };
