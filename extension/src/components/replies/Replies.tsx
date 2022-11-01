@@ -10,52 +10,54 @@ interface RepliesProps extends P {
     commentId: string;
 }
 
-const defaultVisibleReplies: number = 2;
-const showMoreRepliesIncrement: number = 3;
-
 const Replies = (p: RepliesProps) => {
     const [allReplies, setAllReplies] = useState<IC5t[]>([]);
     const [replies, setReplies] = useState<IC5t[]>([]);
-    const [hasMoreReplies, setHasMoreReplies] = useState<boolean>(true);
+    const [showAllReplies, setShowAllReplies] = useState<boolean>(false);
 
     const {data: hReplies} = useGetReplies(p.commentId);
 
     useEffect(() => {
         if (hReplies && hReplies.data) {
             setAllReplies(hReplies.data);
-            if (hReplies.data.length > defaultVisibleReplies) {
-                const initialReplies = hReplies.data.slice(0, defaultVisibleReplies);
-                setReplies(initialReplies);
-                setHasMoreReplies(true);
-            } else {
-                setReplies(hReplies.data);
-                setHasMoreReplies(false);
+            if (hReplies.data.length > 0) {
+                setReplies([hReplies.data[0]]);
             }
         }
     }, [hReplies]);
 
-    const seeMoreClickHandler = () => {
-        if (allReplies.length > replies.length) {
-            if (replies.length + showMoreRepliesIncrement <= allReplies.length) {
-                const moreReplies = allReplies.slice(replies.length, replies.length + showMoreRepliesIncrement);
-                setReplies(pv => [...pv, ...moreReplies]);
-                setHasMoreReplies(replies.length + showMoreRepliesIncrement < allReplies.length);
+    useEffect(() => {
+        if (showAllReplies) {
+            setReplies([...allReplies]);
+        } else {
+            if (allReplies.length > 0) {
+                setReplies([allReplies[0]]);
             } else {
-                const remainingReplies = allReplies.slice(replies.length, allReplies.length);
-                setReplies(pv => [...pv, ...remainingReplies]);
-                setHasMoreReplies(false);
+                setReplies([]);
             }
         }
+    }, [showAllReplies]);
+
+    const showAllReplyClickHandler = () => {
+        setShowAllReplies(true);
     };
+
+    const hideExtraRepliesClickHandler = () => {
+        setShowAllReplies(false);
+    };
+
+    if (replies.length < 1) {
+        return (<></>);
+    }
 
     return (
         <Root>
-            {replies.map((r, i) => <Reply key={i} data={r} />)}
-            {hasMoreReplies && (
+            {replies.length > 0 && replies.map((r, i) => <Reply key={i} data={r} />)}
+            {allReplies.length > 1 && (
                 <div>
-                    <SeeMore onClick={seeMoreClickHandler}>
-                        <T8y text="See more" />
-                    </SeeMore>
+                    <ShowHideReplies onClick={showAllReplies ? hideExtraRepliesClickHandler : showAllReplyClickHandler}>
+                        <T8y text={showAllReplies ? "Hide replies" : "Show all"} />
+                    </ShowHideReplies>
                 </div>
             )}
         </Root>
@@ -70,7 +72,7 @@ const Root = styled.div`
     padding-left: 3px;
 `;
 
-const SeeMore = styled.span`
+const ShowHideReplies = styled.span`
     font-size: 90%;
     color: #2E86C1;
 
