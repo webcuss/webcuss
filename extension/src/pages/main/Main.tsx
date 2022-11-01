@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import C5t from "../../components/c5t/C5t";
+import CommentArea from "../../components/comment-area/CommentArea";
 import SignupSuggestion from "../../components/signup-suggestion/SignupSuggestion";
 import T8y from "../../components/t8y/T8y";
 import { useAuth } from "../../hooks/useAuth";
@@ -19,7 +20,7 @@ const Main = () => {
     const [topicId, setTopicId] = useState<string|undefined>(undefined);
     const [comments, setComments] = useState<IC5t[]>([]);
 
-    const {data: hComments} = useGetComments(s(topicId), b(topicId));
+    const {data: hComments} = useGetComments(s(topicId), b(topicId) && isSignedIn);
 
     useEffect(() => {
         if (hComments && hComments.data) {
@@ -47,6 +48,7 @@ const Main = () => {
 
     return (
         <Root>
+            <CommentArea topicId={s(topicId)} />
             <T8y text={comments.length + " comments"} />
 
             {isSignedIn && (
