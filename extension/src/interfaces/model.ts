@@ -4,7 +4,8 @@ export interface IUser {
 }
 
 export interface IC5t {
-    comment: string;
+    id: string;
+    content: string;
     createdOn: string;
     user: IUser;
 }
@@ -31,4 +32,8 @@ export interface ISignupResponse {
 export interface ICreateTopicResponse {
     id: string;
     commentId?: string;
+}
+
+export interface IGetCommentsResponse {
+    data: IC5t[];
 }

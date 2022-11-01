@@ -24,7 +24,7 @@ const Reply = (p: ReplyProps) => {
                 <b>{p.data.user.uname + " "}</b>
                 <Date>{format(parseISO(p.data.createdOn), "MM/dd/yyyy")}</Date>
             </div>
-            <div>{p.data.comment}</div>
+            <div>{p.data.content}</div>
         </Root>
     );
 };

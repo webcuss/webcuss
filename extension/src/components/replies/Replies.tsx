@@ -7,7 +7,8 @@ import T8y from "../t8y/T8y";
 
 const data: IC5t[] = [
     {
-        comment: "are you dev?",
+        id: "",
+        content: "are you dev?",
         createdOn: "2021-10-02T06:04:22.000Z",
         user: {
             uname: "danny",
@@ -15,7 +16,8 @@ const data: IC5t[] = [
         }
     },
     {
-        comment: "The quick brown fox jumps over the lazy dog",
+        id: "",
+        content: "The quick brown fox jumps over the lazy dog",
         createdOn: "2021-10-02T06:04:22.000Z",
         user: {
             uname: "jim",
@@ -23,7 +25,8 @@ const data: IC5t[] = [
         }
     },
     {
-        comment: "indeed 🤣",
+        id: "",
+        content: "indeed 🤣",
         createdOn: "2021-10-02T06:04:22.000Z",
         user: {
             uname: "kim",
@@ -31,7 +34,8 @@ const data: IC5t[] = [
         }
     },
     {
-        comment: "agree!",
+        id: "",
+        content: "agree!",
         createdOn: "2021-10-02T06:04:22.000Z",
         user: {
             uname: "jonnah",
