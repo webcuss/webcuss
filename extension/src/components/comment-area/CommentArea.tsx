@@ -27,9 +27,21 @@ const CommentArea = (p: ICommentAreaProps) => {
         }
     };
 
+    const keyDownHandler = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if ((e.ctrlKey || e.metaKey) && e.key == "Enter") {
+            sendCommentHandler();
+        }
+    };
+
     return (
         <Root className="w-full flex flex-row ai-center">
-            <TextArea value={commentInput} className="flex-1" rows={2} autoFocus onChange={textChangeHandler} />
+            <TextArea
+                value={commentInput}
+                className="flex-1"
+                rows={2}
+                autoFocus
+                onChange={textChangeHandler}
+                onKeyDown={keyDownHandler} />
             <SendButtonWrapper
                 onMouseEnter={() => setBtnHover(true)}
                 onMouseLeave={() => setBtnHover(false)}
