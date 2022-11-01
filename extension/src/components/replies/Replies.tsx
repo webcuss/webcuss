@@ -20,9 +20,6 @@ const Replies = (p: RepliesProps) => {
     useEffect(() => {
         if (hReplies && hReplies.data) {
             setAllReplies(hReplies.data);
-            if (hReplies.data.length > 0) {
-                setReplies([hReplies.data[0]]);
-            }
         }
     }, [hReplies]);
 
@@ -36,7 +33,7 @@ const Replies = (p: RepliesProps) => {
                 setReplies([]);
             }
         }
-    }, [showAllReplies]);
+    }, [showAllReplies, allReplies]);
 
     const showAllReplyClickHandler = () => {
         setShowAllReplies(true);

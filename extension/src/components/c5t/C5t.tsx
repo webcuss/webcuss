@@ -16,7 +16,11 @@ const C5t = (p: C5tProps) => {
     const [isReplying, setIsReplying] = useState<boolean>(false);
 
     const replyClickHandler = () => {
-        setIsReplying(pv => !pv);
+        setIsReplying(true);
+    };
+
+    const cancelReplyHandler = () => {
+        setIsReplying(false);
     };
 
     return (
@@ -33,7 +37,7 @@ const C5t = (p: C5tProps) => {
                 <ActionReply onClick={replyClickHandler} />
             </Actions>
 
-            {isReplying && (<ReplyArea commentId={p.data.id} />)}
+            {isReplying && (<ReplyArea commentId={p.data.id} onCancel={cancelReplyHandler} />)}
 
             <Replies commentId={p.data.id} />
         </Root>
