@@ -1,77 +1,51 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { useGetReplies } from "../../http";
 import { P } from "../../interfaces/common";
 import { IC5t } from "../../interfaces/model";
 import Reply from "../reply/Reply";
 import T8y from "../t8y/T8y";
 
-const data: IC5t[] = [
-    {
-        id: "",
-        content: "are you dev?",
-        createdOn: "2021-10-02T06:04:22.000Z",
-        user: {
-            uname: "danny",
-            id: ""
-        }
-    },
-    {
-        id: "",
-        content: "The quick brown fox jumps over the lazy dog",
-        createdOn: "2021-10-02T06:04:22.000Z",
-        user: {
-            uname: "jim",
-            id: ""
-        }
-    },
-    {
-        id: "",
-        content: "indeed 🤣",
-        createdOn: "2021-10-02T06:04:22.000Z",
-        user: {
-            uname: "kim",
-            id: ""
-        }
-    },
-    {
-        id: "",
-        content: "agree!",
-        createdOn: "2021-10-02T06:04:22.000Z",
-        user: {
-            uname: "jonnah",
-            id: ""
-        }
-    },
-];
-
 interface RepliesProps extends P {
-    data: IC5t;
+    commentId: string;
 }
 
 const defaultVisibleReplies: number = 2;
-
-const Root = styled.div`
-    margin-left: 5px;
-    border-left: 1px solid #C6C6C6;
-    padding-left: 3px;
-`;
-
-const SeeMore = styled.span`
-    font-size: 90%;
-    color: #2E86C1;
-
-    &:hover {
-        cursor: pointer;
-    }
-`;
+const showMoreRepliesIncrement: number = 3;
 
 const Replies = (p: RepliesProps) => {
-    const [replies, setReplies] = useState<IC5t[]>(data.slice(0, defaultVisibleReplies));
+    const [allReplies, setAllReplies] = useState<IC5t[]>([]);
+    const [replies, setReplies] = useState<IC5t[]>([]);
     const [hasMoreReplies, setHasMoreReplies] = useState<boolean>(true);
 
+    const {data: hReplies} = useGetReplies(p.commentId);
+
+    useEffect(() => {
+        if (hReplies && hReplies.data) {
+            setAllReplies(hReplies.data);
+            if (hReplies.data.length > defaultVisibleReplies) {
+                const initialReplies = hReplies.data.slice(0, defaultVisibleReplies);
+                setReplies(initialReplies);
+                setHasMoreReplies(true);
+            } else {
+                setReplies(hReplies.data);
+                setHasMoreReplies(false);
+            }
+        }
+    }, [hReplies]);
+
     const seeMoreClickHandler = () => {
-        setReplies(prev => [...prev, ...data.slice(defaultVisibleReplies, data.length)]);
-        setHasMoreReplies(false);
+        if (allReplies.length > replies.length) {
+            if (replies.length + showMoreRepliesIncrement <= allReplies.length) {
+                const moreReplies = allReplies.slice(replies.length, replies.length + showMoreRepliesIncrement);
+                setReplies(pv => [...pv, ...moreReplies]);
+                setHasMoreReplies(replies.length + showMoreRepliesIncrement < allReplies.length);
+            } else {
+                const remainingReplies = allReplies.slice(replies.length, allReplies.length);
+                setReplies(pv => [...pv, ...remainingReplies]);
+                setHasMoreReplies(false);
+            }
+        }
     };
 
     return (
@@ -89,3 +63,18 @@ const Replies = (p: RepliesProps) => {
 };
 
 export default Replies;
+
+const Root = styled.div`
+    margin-left: 5px;
+    border-left: 1px solid #C6C6C6;
+    padding-left: 3px;
+`;
+
+const SeeMore = styled.span`
+    font-size: 90%;
+    color: #2E86C1;
+
+    &:hover {
+        cursor: pointer;
+    }
+`;

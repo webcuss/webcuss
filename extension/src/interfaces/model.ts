@@ -41,3 +41,14 @@ export interface IGetCommentsResponse {
 export interface IAddCommentResponse {
     id: string;
 }
+
+export interface IReply {
+    id: string;
+    content: string;
+    createdOn: string;
+    user: IUser;
+}
+
+export interface IGetRepliesResponse {
+    data: IReply[];
+}

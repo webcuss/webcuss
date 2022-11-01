@@ -26,7 +26,7 @@ const C5t = (p: C5tProps) => {
                 <ActionReply />
             </Actions>
 
-            <Replies data={p.data} />
+            <Replies commentId={p.data.id} />
         </Root>
     );
 };
