@@ -22,7 +22,7 @@ const CommentArea = (p: ICommentAreaProps) => {
 
     const sendCommentHandler = async () => {
         if (p.topicId && commentInput) {
-            const res = await addComment.mutateAsync({comment: commentInput});
+            await addComment.mutateAsync({comment: commentInput});
             setCommentInput("");
         }
     };
