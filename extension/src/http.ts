@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { useQuery, useMutation, QueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { storageGetValue } from "./utils/storage";
 import { IAddCommentResponse, ICreateTopicResponse, IGetCommentsResponse, IGetTopicsResponse, ISignupResponse } from "./interfaces/model";
 
@@ -86,7 +86,7 @@ export const useGetComments = (topicId: string, enabled: boolean = true) => {
 };
 
 export const useAddComment = (topicId: string) => {
-    const queryClient = new QueryClient();
+    const queryClient = useQueryClient();
     return useMutation(["post-add-comment", topicId], async (params: {
         comment: string,
     }) => {
