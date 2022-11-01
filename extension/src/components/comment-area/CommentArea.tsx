@@ -40,6 +40,7 @@ const CommentArea = (p: ICommentAreaProps) => {
                 className="flex-1"
                 rows={2}
                 autoFocus
+                placeholder="Add comment (Ctrl+Enter to send)"
                 onChange={textChangeHandler}
                 onKeyDown={keyDownHandler} />
             <SendButtonWrapper
