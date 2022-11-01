@@ -6,12 +6,19 @@ import { IC5t } from "../../interfaces/model";
 import ActionLike from "../action-like/ActionLike";
 import ActionReply from "../action-reply/ActionReply";
 import Replies from "../replies/Replies";
+import ReplyArea from "../reply-area/ReplyArea";
 
 interface C5tProps extends P {
     data: IC5t;
 }
 
 const C5t = (p: C5tProps) => {
+    const [isReplying, setIsReplying] = useState<boolean>(false);
+
+    const replyClickHandler = () => {
+        setIsReplying(pv => !pv);
+    };
+
     return (
         <Root>
             <div>
@@ -23,8 +30,10 @@ const C5t = (p: C5tProps) => {
 
             <Actions>
                 <ActionLike count={69} />
-                <ActionReply />
+                <ActionReply onClick={replyClickHandler} />
             </Actions>
+
+            {isReplying && (<ReplyArea commentId={p.data.id} />)}
 
             <Replies commentId={p.data.id} />
         </Root>
