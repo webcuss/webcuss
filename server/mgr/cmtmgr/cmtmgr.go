@@ -3,14 +3,15 @@ package cmtmgr
 import (
 	"context"
 	"fmt"
+	"log"
+	"net/http"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/webcuss/webcuss/types"
-	"log"
-	"net/http"
-	"time"
 )
 
 func isValidUUID(u string) bool {
@@ -112,7 +113,7 @@ func GetComments(c *gin.Context, dbConn *pgxpool.Pool) {
 	}
 
 	sql := `
-	SELECT c."id", c."content", c."userId", a."uname"
+	SELECT c."id", c."content", c."userId", a."uname", c."createdOn"
 	FROM comment c
 	INNER JOIN avatar a ON a."id" = c."userId"
 	WHERE c."topicId" = $1
@@ -120,10 +121,11 @@ func GetComments(c *gin.Context, dbConn *pgxpool.Pool) {
 	`
 
 	type CommentWithUser struct {
-		Id      pgtype.UUID
-		Content pgtype.Text
-		UserId  pgtype.UUID
-		Uname   pgtype.Text
+		Id        pgtype.UUID
+		Content   pgtype.Text
+		UserId    pgtype.UUID
+		Uname     pgtype.Text
+		CreatedOn pgtype.Timestamp
 	}
 
 	rows, err := dbConn.Query(context.Background(), sql, uri.TopicId)
@@ -135,7 +137,7 @@ func GetComments(c *gin.Context, dbConn *pgxpool.Pool) {
 	result := make([]gin.H, 0)
 	for rows.Next() {
 		var row CommentWithUser
-		err = rows.Scan(&row.Id, &row.Content, &row.UserId, &row.Uname)
+		err = rows.Scan(&row.Id, &row.Content, &row.UserId, &row.Uname, &row.CreatedOn)
 		if err != nil {
 			log.Println("Failed to parse row, err=", err)
 			continue
@@ -147,6 +149,9 @@ func GetComments(c *gin.Context, dbConn *pgxpool.Pool) {
 				"id":    fmt.Sprintf("%x", row.UserId.Bytes),
 				"uname": row.Uname.String,
 			},
+		}
+		if row.CreatedOn.Valid {
+			item["createdOn"] = row.CreatedOn.Time.Format(time.RFC3339)
 		}
 		result = append(result, item)
 	}
