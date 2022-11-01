@@ -4,6 +4,7 @@ import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
 import { useAddComment } from "../../http";
+import { isCtrlEnter } from "../../utils/keyboard";
 
 interface ICommentAreaProps extends P {
     topicId: string;
@@ -28,7 +29,7 @@ const CommentArea = (p: ICommentAreaProps) => {
     };
 
     const keyDownHandler = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        if ((e.ctrlKey || e.metaKey) && e.key == "Enter") {
+        if (isCtrlEnter(e)) {
             sendCommentHandler();
         }
     };
