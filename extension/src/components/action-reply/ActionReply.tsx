@@ -21,7 +21,7 @@ const ActionReply = () => {
     return (
         <Root>
             <FontAwesomeIcon icon={faComment} />
-            <Txt>reply</Txt>
+            <Txt>Reply</Txt>
         </Root>
     );
 };
