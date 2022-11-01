@@ -37,3 +37,7 @@ export interface ICreateTopicResponse {
 export interface IGetCommentsResponse {
     data: IC5t[];
 }
+
+export interface IAddCommentResponse {
+    id: string;
+}

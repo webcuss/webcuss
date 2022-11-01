@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, QueryClient } from '@tanstack/react-query';
 import { storageGetValue } from "./utils/storage";
-import { ICreateTopicResponse, IGetCommentsResponse, IGetTopicsResponse, ISignupResponse } from "./interfaces/model";
+import { IAddCommentResponse, ICreateTopicResponse, IGetCommentsResponse, IGetTopicsResponse, ISignupResponse } from "./interfaces/model";
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
@@ -77,10 +77,27 @@ export const useCreateTopic = () => {
 
 export const useGetComments = (topicId: string, enabled: boolean = true) => {
     return useQuery(["get-comments", topicId], async () => {
-        const url = `/topic/${topicId}/cmt`;
+        const url = `/tpc/${topicId}/cmt`;
         const {data} = await http.get<IGetCommentsResponse>(url);
         return data;
     }, {
         enabled: enabled,
+    });
+};
+
+export const useAddComment = (topicId: string) => {
+    const queryClient = new QueryClient();
+    return useMutation(["post-add-comment", topicId], async (params: {
+        comment: string,
+    }) => {
+        const url = `/tpc/${topicId}/cmt`;
+        const {data} = await http.post<IAddCommentResponse>(url, {
+            comment: params.comment,
+        });
+        return data;
+    }, {
+        onSuccess: () => {
+            queryClient.invalidateQueries(["get-comments", topicId]);
+        }
     });
 };

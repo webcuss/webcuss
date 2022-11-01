@@ -3,16 +3,17 @@ package tpcmgr
 import (
 	"context"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/jackc/pgx/v5/pgtype"
-	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/webcuss/webcuss/types"
 	"log"
 	"net/http"
 	"net/url"
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/webcuss/webcuss/types"
 )
 
 func createOrGetTopic(dbConn *pgxpool.Pool, userId, urlString, title string) (string, bool, error) {
@@ -33,11 +34,18 @@ func createOrGetTopic(dbConn *pgxpool.Pool, userId, urlString, title string) (st
 	FROM topic t
 	WHERE t.hostname = $1
 		AND t.path = $2
-		AND t."querySearch" @@ to_tsquery('english', $3);
+		@{querySearch}
+	LIMIT 1;
 	`
 	var tpcId pgtype.UUID
-	err = dbConn.QueryRow(context.Background(), sqlFind, hostname, path, strings.Join(querySlice, " & ")).
-		Scan(&tpcId)
+	if len(u.RawQuery) > 0 {
+		sqlFind = strings.ReplaceAll(sqlFind, `@{querySearch}`, `AND t."querySearch" @@ to_tsquery('english', $3)`)
+		err = dbConn.QueryRow(context.Background(), sqlFind, hostname, path, strings.Join(querySlice, " & ")).
+			Scan(&tpcId)
+	} else {
+		sqlFind = strings.ReplaceAll(sqlFind, `@{querySearch}`, ``)
+		err = dbConn.QueryRow(context.Background(), sqlFind, hostname, path).Scan(&tpcId)
+	}
 	if err != nil {
 		// no row
 		// insert
