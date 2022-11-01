@@ -52,3 +52,7 @@ export interface IReply {
 export interface IGetRepliesResponse {
     data: IReply[];
 }
+
+export interface IAddReplyResponse {
+    id: string;
+}
