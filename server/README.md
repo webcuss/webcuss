@@ -165,6 +165,7 @@ go test
                     {
                         "id": "string",
                         "content": "string",
+                        "createdOn": "string",
                         "user": {
                             "id": "string",
                             "uname": "string"
