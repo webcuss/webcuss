@@ -1,70 +1,105 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { faReply } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { isCtrlEnter } from "../../utils/keyboard";
 import { useAddReply } from "../../http";
+import { format } from "date-fns";
+import { randomNumber } from "../../utils/random";
 
 interface IReplyAreaProps {
     commentId: string;
+    onCancel?: () => void;
 }
 
 const ReplyArea = (p: IReplyAreaProps) => {
+    const [randId] = useState<string>(`id${randomNumber(99, 9999)}`);
     const [replyInput, setReplyInput] = useState<string>("");
 
     const addReply = useAddReply(p.commentId);
 
-    const textChangeHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        const value = e.currentTarget.value;
+    useEffect(() => {
+        const elem = document.getElementById(randId);
+        if (elem) {
+            const range = document.createRange();
+            const sel = window.getSelection();
+            
+            range.setStart(elem, 0);
+            range.collapse(true);
+            
+            if (sel) {
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+        }
+    }, []);
+
+    const textChangeHandler = (e: React.ChangeEvent<HTMLSpanElement>) => {
+        const value = e.currentTarget.innerHTML;
         setReplyInput(value);
     };
 
     const sendReplyHandler = async () => {
         if (p.commentId && replyInput) {
             await addReply.mutateAsync({comment: replyInput});
-            setReplyInput("");
+            const elem = document.getElementById(randId);
+            if (elem) {
+                elem.innerHTML = "";
+            }
         }
     };
 
-    const keyDownHandler = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    const keyDownHandler = (e: React.KeyboardEvent<HTMLSpanElement>) => {
         if (isCtrlEnter(e)) {
             sendReplyHandler();
         }
     };
 
+    const cancelHandler = () => {
+        if (p.onCancel) {
+            p.onCancel();
+        }
+    };
+
     return (
-        <Root className="w-full flex flex-row ai-center">
-            <TextArea
-                value={replyInput}
-                className="flex-1"
-                rows={1}
-                autoFocus
-                placeholder="Add reply (Ctrl+Enter to send)"
-                onChange={textChangeHandler}
+        <Root>
+            <div>
+                <b>pelican7570</b>
+                <StyledDate>{format(new Date(), "MM/dd/yyyy")}</StyledDate>
+            </div>
+            <StyledReplyInput
+                id={randId}
+                contentEditable
+                onInput={textChangeHandler}
+                onBlur={cancelHandler}
                 onKeyDown={keyDownHandler} />
-            <SendButtonWrapper
-                onClick={sendReplyHandler}>
-                <FontAwesomeIcon color="#2E86C1" size="lg" icon={faReply} />
-            </SendButtonWrapper>
+            <ReplyAssistant>{replyInput ? "" : "Start typing "}<i>(Ctrl+Enter to send)</i></ReplyAssistant>
         </Root>
     );
 };
 
 export default ReplyArea;
 
-const Root = styled.div``;
-
-const TextArea = styled.textarea`
-    min-height: 30px;
-    max-height: 50px;
+const Root = styled.div`
+    margin-left: 5px;
+    border-left: 1px solid #C6C6C6;
+    padding-left: 3px;
 `;
 
-const SendButtonWrapper = styled.div`
-    width: 21px;
-    padding: 3px 0 3px 3px;
-    margin-left: 3px;
+const StyledDate = styled.span`
+    color: var(--gray);
+    font-size: 80%;
+`;
 
-    &:hover {
-        cursor: pointer;
+const StyledReplyInput = styled.span`
+    padding: 2px;
+    border:0;
+    outline:0;
+
+    &:focus {
+        outline: none !important;
     }
+`;
+
+const ReplyAssistant = styled.span`
+    color: var(--gray);
+    margin-left: 3px;
 `;

@@ -8,15 +8,6 @@ interface ReplyProps extends P {
     data: IC5t;
 }
 
-const Root = styled.div`
-    margin-bottom: 3px;
-`;
-
-const Date = styled.span`
-    color: var(--gray);
-    font-size: 80%;
-`;
-
 const Reply = (p: ReplyProps) => {
     return (
         <Root>
@@ -30,3 +21,12 @@ const Reply = (p: ReplyProps) => {
 };
 
 export default Reply;
+
+const Root = styled.div`
+    margin-bottom: 3px;
+`;
+
+const Date = styled.span`
+    color: var(--gray);
+    font-size: 80%;
+`;
