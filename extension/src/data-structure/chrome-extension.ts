@@ -38,4 +38,24 @@ export class ChromeExtension extends BrowserExtension {
             });
         });
     }
+
+    public storageSetValue(value: { [key: string]: string; }): Promise<void> {
+        return new Promise<void>(res => {
+            chrome.storage.sync.set(value, () => {
+                res();
+            });
+        });
+    }
+
+    public storageGetValue(key: string): Promise<string | undefined> {
+        return new Promise<string|undefined>(res => {
+            chrome.storage.sync.get([key], (result) => {
+                res(result[key]);
+            });
+        });
+    }
+
+    public storageRemoveValue(key: string | string[]): Promise<void> {
+        return chrome.storage.sync.remove(key);
+    }
 }

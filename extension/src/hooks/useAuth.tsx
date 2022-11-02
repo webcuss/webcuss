@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { P } from "../interfaces/common";
-import { storageGetValue } from "../utils/storage";
 import { Buffer } from "buffer";
+import { useBrowserExtension } from "./useBrowserExtension";
 
 interface IAuth {
     isSignedIn: boolean;
@@ -13,12 +13,14 @@ const AuthContext = React.createContext<IAuth>({
 });
 
 export const AuthProvider = (p: P) => {
+    const {chromeExt} = useBrowserExtension();
+
     const [isSignedIn, setIsSignedIn] = useState<boolean>(true);
     const [uname, setUname] = useState<string|undefined>(undefined);
 
     useEffect(() => {
         (async () => {
-            const token = await storageGetValue("token");
+            const token = await chromeExt.storageGetValue("token");
             setIsSignedIn(!!token);
             if (token) {
                 const jwtParts = token.split(".");

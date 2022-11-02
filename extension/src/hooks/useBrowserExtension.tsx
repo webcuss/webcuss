@@ -1,9 +1,10 @@
 import React from "react";
+import { BrowserExtension } from "../data-structure/browser-extension";
 import { ChromeExtension } from "../data-structure/chrome-extension";
 import { P } from "../interfaces/common";
 
 interface IBrowserExtension {
-    chromeExt: ChromeExtension;
+    chromeExt: BrowserExtension;
 }
 
 const defaultChromeExt = new ChromeExtension();
