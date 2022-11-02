@@ -16,10 +16,11 @@ import (
 	"github.com/webcuss/webcuss/types"
 )
 
-func createAuthToken(userId string) (string, error) {
+func createAuthToken(userId, uname string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"aud": strings.ReplaceAll(userId, "-", ""),
-		"exp": time.Now().Add(time.Hour * 8760).Unix(), //8760 total hours of a year
+		"aud":   strings.ReplaceAll(userId, "-", ""),
+		"exp":   time.Now().Add(time.Hour * 8760).Unix(), //8760 total hours of a year
+		"uname": uname,
 	})
 	tokenString, err := token.SignedString(config.GetSecret())
 	if err != nil {
@@ -73,7 +74,7 @@ func SignUp(c *gin.Context, db *pgxpool.Pool) {
 	err = db.QueryRow(context.Background(), insertSql, req.Uname, req.Pword, time.Now().UTC()).Scan(&userId)
 	if err == nil {
 		// create token
-		tokenString, err := createAuthToken(userId)
+		tokenString, err := createAuthToken(userId, req.Uname)
 		if err == nil {
 			// commit txn
 			err := txn.Commit(context.Background())
@@ -114,8 +115,12 @@ func SignIn(c *gin.Context, db *pgxpool.Pool) {
 		c.String(http.StatusUnauthorized, "Incorrect credentials")
 		return
 	}
-	tokenString, err := createAuthToken(fmt.Sprintf("%x", userId.Bytes))
-	c.JSON(http.StatusOK, gin.H{
-		"token": tokenString,
-	})
+	tokenString, err := createAuthToken(fmt.Sprintf("%x", userId.Bytes), req.Uname)
+	if err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"token": tokenString,
+		})
+	}
 }

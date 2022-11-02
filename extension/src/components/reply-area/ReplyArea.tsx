@@ -4,6 +4,7 @@ import { isCtrlEnter } from "../../utils/keyboard";
 import { useAddReply } from "../../http";
 import { format } from "date-fns";
 import { randomNumber } from "../../utils/random";
+import { useAuth } from "../../hooks/useAuth";
 
 interface IReplyAreaProps {
     commentId: string;
@@ -11,6 +12,8 @@ interface IReplyAreaProps {
 }
 
 const ReplyArea = (p: IReplyAreaProps) => {
+    const {uname} = useAuth();
+
     const [randId] = useState<string>(`id${randomNumber(99, 9999)}`);
     const [replyInput, setReplyInput] = useState<string>("");
 
@@ -54,15 +57,17 @@ const ReplyArea = (p: IReplyAreaProps) => {
     };
 
     const cancelHandler = () => {
-        if (p.onCancel) {
-            p.onCancel();
-        }
+        setTimeout(() => {
+            if (p.onCancel) {
+                p.onCancel();
+            }
+        }, 200);
     };
 
     return (
         <Root>
             <div>
-                <b>pelican7570</b>
+                <b>{uname}</b>
                 <StyledDate>{format(new Date(), "MM/dd/yyyy")}</StyledDate>
             </div>
             <StyledReplyInput
