@@ -54,9 +54,11 @@ const ReplyArea = (p: IReplyAreaProps) => {
     };
 
     const cancelHandler = () => {
-        if (p.onCancel) {
-            p.onCancel();
-        }
+        setTimeout(() => {
+            if (p.onCancel) {
+                p.onCancel();
+            }
+        }, 200);
     };
 
     return (
