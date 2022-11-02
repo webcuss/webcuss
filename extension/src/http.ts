@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { storageGetValue } from "./utils/storage";
 import { IAddCommentResponse, IAddReplyResponse, ICreateTopicResponse, IGetCommentsResponse, IGetRepliesResponse, IGetTopicsResponse, ISignupResponse } from "./interfaces/model";
+import { ChromeExtension } from "./data-structure/chrome-extension";
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
@@ -17,9 +17,11 @@ const config: AxiosRequestConfig = {
 
 const http = axios.create(config);
 
+const chromeExt = new ChromeExtension();
+
 http.interceptors.request.use(async (conf) => {
     let c = { ...conf };
-    const token = await storageGetValue("token");
+    const token = await chromeExt.storageGetValue("token");
     if (token) {
         c = {
             ...c,

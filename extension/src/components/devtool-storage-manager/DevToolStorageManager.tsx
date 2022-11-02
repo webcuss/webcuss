@@ -2,9 +2,8 @@ import React, { useEffect, useState } from "react";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
-import { storageRemoveValue } from "../../utils/storage";
 import T8y from "../t8y/T8y";
-import { randomString } from "../../utils/random";
+import { useBrowserExtension } from "../../hooks/useBrowserExtension";
 
 interface IEntry {
     entryKey: string;
@@ -12,6 +11,8 @@ interface IEntry {
 }
 
 const DevToolStorageManager = () => {
+    const {chromeExt} = useBrowserExtension();
+
     const [entries, setEntries] = useState<IEntry[]>([]);
 
     useEffect(() => {
@@ -36,7 +37,7 @@ const DevToolStorageManager = () => {
     };
     
     const deleteHandler = async (key: string) => {
-        await storageRemoveValue(key);
+        await chromeExt.storageRemoveValue(key);
         refreshStorage();
     };
 

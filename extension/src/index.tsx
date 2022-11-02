@@ -18,15 +18,15 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <DebugProvider>
-          <BrowserExtensionProvider>
+    <BrowserExtensionProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <DebugProvider>
             <App />
-          </BrowserExtensionProvider>
-        </DebugProvider>
-      </AuthProvider>
-    </QueryClientProvider>
+          </DebugProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </BrowserExtensionProvider>
   </React.StrictMode>
 );
 

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { useBrowserExtension } from "../../hooks/useBrowserExtension";
 import { useSignup } from "../../http";
 import { P } from "../../interfaces/common";
 import { downloadCredential } from "../../utils/download";
 import { randomNumber, randomString } from "../../utils/random";
-import { storageSetValue } from "../../utils/storage";
 import Button from "../button/Button";
 import Checkbox from "../checkbox/Checkbox";
 import Input from "../input/Input";
@@ -31,6 +31,7 @@ const SignupSuggestion = (p: SignupSuggestionProps) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const signup = useSignup();
+    const {chromeExt} = useBrowserExtension();
 
     useEffect(() => {
         if (username.length < 1) {
@@ -58,7 +59,7 @@ const SignupSuggestion = (p: SignupSuggestionProps) => {
                 password: password,
             });
 
-            await storageSetValue({token: token});
+            await chromeExt.storageSetValue({token: token});
         
             // download credentials
             downloadCredential(username, password);
