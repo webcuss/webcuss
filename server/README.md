@@ -70,6 +70,15 @@ go test
 | content   | string      |       |            |
 | createdOn | timestamp   | y     |            |
 
+### Table `reaction`
+| column    | type        | index | fk         | desc       |
+|-----------|-------------|-------|------------|------------|
+| id        | string      | y     |            |            |
+| userId    | string      | y     | user.id    |            |
+| commentId | string      | y     | comment.id |            |
+| reaction  | int         |       |            | `0`=👍     |
+| createdOn | timestamp   | y     |            |            |
+
 ## API
 * `/sup` - Sign up
     * POST

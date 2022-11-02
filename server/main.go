@@ -12,17 +12,17 @@ import (
 )
 
 func main() {
-	appSecret := os.Getenv("APP_SECRET")
-	if len(strings.TrimSpace(appSecret)) < 1 {
-		log.Fatalln("APP_SECRET environment variable is missing")
-	}
-
 	dbConn := db.Connect()
 	defer dbConn.Close()
 
 	if len(os.Args) > 1 && os.Args[1] == "migrate" {
 		migrate.Migrate(dbConn)
 		return
+	} else {
+		appSecret := os.Getenv("APP_SECRET")
+		if len(strings.TrimSpace(appSecret)) < 1 {
+			log.Fatalln("APP_SECRET environment variable is missing")
+		}
 	}
 
 	r := route.SetupRouter(dbConn)

@@ -2,10 +2,11 @@ package db
 
 import (
 	"context"
-	"github.com/jackc/pgx/v5/pgxpool"
 	"log"
 	"os"
 	"strings"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 func Connect() *pgxpool.Pool {
@@ -137,6 +138,34 @@ func CreateTables(db *pgxpool.Pool) {
 			"userId" ASC
 		);
 		CREATE INDEX IF NOT EXISTS "idx_comment_createdOn" ON comment (
+			"userId" DESC
+		);
+
+		CREATE TABLE IF NOT EXISTS reaction (
+			"id" UUID NOT NULL DEFAULT gen_random_uuid(),
+			"userId" UUID NOT NULL,
+			"commentId" UUID NULL,
+			"reaction" INTEGER NOT NULL,
+			"createdOn" TIMESTAMP NOT NULL,
+			PRIMARY KEY (id),
+			CONSTRAINT fk_user
+				FOREIGN KEY ("userId")
+					REFERENCES avatar("id")
+					ON DELETE CASCADE,
+			CONSTRAINT fk_comment
+				FOREIGN KEY ("commentId")
+					REFERENCES comment("id")
+					ON DELETE CASCADE
+		);
+
+		-- indexes
+		CREATE INDEX IF NOT EXISTS "idx_reaction_userId" ON comment (
+			"userId" ASC
+		);
+		CREATE INDEX IF NOT EXISTS "idx_reaction_commentId" ON comment (
+			"commentId" ASC
+		);
+		CREATE INDEX IF NOT EXISTS "idx_reaction_createdOn" ON comment (
 			"userId" DESC
 		);
 		`
