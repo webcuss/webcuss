@@ -8,16 +8,11 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/webcuss/webcuss/types"
+	"github.com/webcuss/webcuss/util"
 )
-
-func isValidUUID(u string) bool {
-	_, err := uuid.Parse(u)
-	return err == nil
-}
 
 func PostComment(c *gin.Context, dbConn *pgxpool.Pool) {
 	var uri types.TopicCommentUri
@@ -35,7 +30,7 @@ func PostComment(c *gin.Context, dbConn *pgxpool.Pool) {
 	}
 
 	// validate topicId
-	if !isValidUUID(uri.TopicId) {
+	if !util.IsValidUUID(uri.TopicId) {
 		c.String(http.StatusBadRequest, "Invalid topicId")
 		return
 	}
@@ -89,7 +84,7 @@ func GetComments(c *gin.Context, dbConn *pgxpool.Pool) {
 	}
 
 	// validate topicId
-	if !isValidUUID(uri.TopicId) {
+	if !util.IsValidUUID(uri.TopicId) {
 		c.String(http.StatusBadRequest, "Invalid topicId")
 		return
 	}
@@ -177,7 +172,7 @@ func PostReply(c *gin.Context, dbConn *pgxpool.Pool) {
 	}
 
 	// validate commentId
-	if !isValidUUID(uri.CommentId) {
+	if !util.IsValidUUID(uri.CommentId) {
 		c.String(http.StatusBadRequest, "Invalid commentId")
 		return
 	}
@@ -232,7 +227,7 @@ func GetReplies(c *gin.Context, dbConn *pgxpool.Pool) {
 	}
 
 	// validate commentId
-	if !isValidUUID(uri.CommentId) {
+	if !util.IsValidUUID(uri.CommentId) {
 		c.String(http.StatusBadRequest, "Invalid commentId")
 		return
 	}
