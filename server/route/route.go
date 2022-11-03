@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/webcuss/webcuss/mgr/cmtmgr"
+	"github.com/webcuss/webcuss/mgr/rctnmgr"
 	"github.com/webcuss/webcuss/mgr/tpcmgr"
 
 	"github.com/gin-gonic/gin"
@@ -59,6 +60,14 @@ func SetupRouter(dbConn *pgxpool.Pool) *gin.Engine {
 
 	r.GET("/cmt/:commentId", func(c *gin.Context) {
 		cmtmgr.GetReplies(c, dbConn)
+	})
+
+	r.POST("/rctn/:commentId", func(c *gin.Context) {
+		rctnmgr.PostReaction(c, dbConn)
+	})
+
+	r.GET("/rctn/:commentId", func(c *gin.Context) {
+		rctnmgr.GetReaction(c, dbConn)
 	})
 
 	r.NoRoute(func(c *gin.Context) {

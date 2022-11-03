@@ -78,6 +78,7 @@ go test
 | commentId | string      | y     | comment.id |            |
 | reaction  | int         |       |            | `0`=👍     |
 | createdOn | timestamp   | y     |            |            |
+**Unique constraint**: `[userId, commentId, reaction]`
 
 ## API
 * `/sup` - Sign up
@@ -212,6 +213,32 @@ go test
                             "id": "string",
                             "uname": "string"
                         }
+                    }
+                ]
+            }
+            ```
+* `/rctn/{commentId}`
+    * POST - add reaction to a comment
+        * body
+            ```json
+            {
+                "reaction": "number"
+            }
+            ```
+        * returns 201 Created
+            ```json
+            {
+                "id": "string"
+            }
+            ```
+    * GET - get the reactions of a comment
+        * returns 200 Ok
+            ```json
+            {
+                "data": [
+                    {
+                        "reaction": "number",
+                        "count": "number"
                     }
                 ]
             }

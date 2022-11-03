@@ -144,7 +144,7 @@ func CreateTables(db *pgxpool.Pool) {
 		CREATE TABLE IF NOT EXISTS reaction (
 			"id" UUID NOT NULL DEFAULT gen_random_uuid(),
 			"userId" UUID NOT NULL,
-			"commentId" UUID NULL,
+			"commentId" UUID NOT NULL,
 			"reaction" INTEGER NOT NULL,
 			"createdOn" TIMESTAMP NOT NULL,
 			PRIMARY KEY (id),
@@ -155,17 +155,19 @@ func CreateTables(db *pgxpool.Pool) {
 			CONSTRAINT fk_comment
 				FOREIGN KEY ("commentId")
 					REFERENCES comment("id")
-					ON DELETE CASCADE
+					ON DELETE CASCADE,
+			CONSTRAINT unique_userid_commentid_reaction
+				UNIQUE ("userId", "commentId", "reaction")
 		);
 
 		-- indexes
-		CREATE INDEX IF NOT EXISTS "idx_reaction_userId" ON comment (
+		CREATE INDEX IF NOT EXISTS "idx_reaction_userId" ON reaction (
 			"userId" ASC
 		);
-		CREATE INDEX IF NOT EXISTS "idx_reaction_commentId" ON comment (
+		CREATE INDEX IF NOT EXISTS "idx_reaction_commentId" ON reaction (
 			"commentId" ASC
 		);
-		CREATE INDEX IF NOT EXISTS "idx_reaction_createdOn" ON comment (
+		CREATE INDEX IF NOT EXISTS "idx_reaction_createdOn" ON reaction (
 			"userId" DESC
 		);
 		`

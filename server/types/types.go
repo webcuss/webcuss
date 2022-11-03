@@ -44,3 +44,15 @@ type CommentReplyUri struct {
 type PostReplyReq struct {
 	Comment string `field:"comment" binding:"required"`
 }
+
+type PostReactionUri struct {
+	CommentId string `uri:"commentId" binding:"required"`
+}
+
+type PostReactionReq struct {
+	Reaction int `field:"reaction" binding:"required,numeric"`
+}
+
+type GetReactionUri struct {
+	CommentId string `uri:"commentId" binding:"required"`
+}
