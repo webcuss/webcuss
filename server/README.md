@@ -78,7 +78,7 @@ go test
 | commentId | string      | y     | comment.id |            |
 | reaction  | int         |       |            | `0`=👍     |
 | createdOn | timestamp   | y     |            |            |
-**Composite Index**: `[userId, commentId, reaction]`
+**Unique constraint**: `[userId, commentId, reaction]`
 
 ## API
 * `/sup` - Sign up

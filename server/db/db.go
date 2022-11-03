@@ -155,7 +155,9 @@ func CreateTables(db *pgxpool.Pool) {
 			CONSTRAINT fk_comment
 				FOREIGN KEY ("commentId")
 					REFERENCES comment("id")
-					ON DELETE CASCADE
+					ON DELETE CASCADE,
+			CONSTRAINT unique_userid_commentid_reaction
+				UNIQUE ("userId", "commentId", "reaction")
 		);
 
 		-- indexes
@@ -167,11 +169,6 @@ func CreateTables(db *pgxpool.Pool) {
 		);
 		CREATE INDEX IF NOT EXISTS "idx_reaction_createdOn" ON reaction (
 			"userId" DESC
-		);
-		CREATE INDEX IF NOT EXISTS "idx_reaction_unique" ON reaction (
-			"userId",
-			"commentId",
-			"reaction"
 		);
 		`
 	_, err := db.Exec(context.Background(), createTables)
