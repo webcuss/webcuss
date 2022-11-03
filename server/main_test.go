@@ -8,6 +8,7 @@ import (
 	"math/rand"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
@@ -62,6 +63,10 @@ type ResReply struct {
 
 type ResGetReplies struct {
 	Data []ResReply `field:"data"`
+}
+
+type ResPostReactionBody struct {
+	Id string `field:"id"`
 }
 
 func getRandInt() int {
@@ -668,4 +673,145 @@ func TestGetRepliesShouldHave404NotFoundWhenCommentIdIsNonExistent(t *testing.T)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusNotFound, w.Code)
+}
+
+func TestPostReactionShouldHaveExpectedResult(t *testing.T) {
+	dbConn := db.Connect()
+	defer dbConn.Close()
+	db.CreateTables(dbConn)
+
+	router := route.SetupRouter(dbConn)
+
+	authToken := signUp(t, router, fmt.Sprintf("user%d", getRandInt()), "123456")
+
+	randHostname := "https://" + getRandomString() + ".example.com/category/blah/page.php?p1=abc&p2=123"
+	body1 := gin.H{
+		"url":   randHostname,
+		"title": "Lorem ipsum",
+	}
+	b1, _ := json.Marshal(body1)
+
+	w1 := httptest.NewRecorder()
+	req1, _ := http.NewRequest("POST", "/tpc", bytes.NewReader(b1))
+	req1.Header.Set("Content-Type", "application/json")
+	req1.Header.Set("Authorization", "Bearer "+authToken)
+	router.ServeHTTP(w1, req1)
+
+	assert.Equal(t, http.StatusCreated, w1.Code)
+	assert.NotEmpty(t, w1.Body.String())
+
+	res1 := ResPostTopicBody{}
+	_ = json.Unmarshal(w1.Body.Bytes(), &res1)
+	assert.NotEmpty(t, res1.Id)
+
+	// post comment
+	body2 := gin.H{
+		"comment": "I like it! " + getRandomString(),
+	}
+	b2, _ := json.Marshal(body2)
+
+	w2 := httptest.NewRecorder()
+	req2, _ := http.NewRequest("POST", fmt.Sprintf("/tpc/%s/cmt", res1.Id), bytes.NewReader(b2))
+	req2.Header.Set("Content-Type", "application/json")
+	req2.Header.Set("Authorization", "Bearer "+authToken)
+	router.ServeHTTP(w2, req2)
+
+	assert.Equal(t, http.StatusCreated, w2.Code)
+	var res2 ResPostCommentBody
+	_ = json.Unmarshal(w2.Body.Bytes(), &res2)
+	assert.NotEmpty(t, res2.Id)
+
+	// post reaction
+	body3 := gin.H{
+		"reaction": rand.Intn(5),
+	}
+	b3, _ := json.Marshal(body3)
+
+	w3 := httptest.NewRecorder()
+	req3, _ := http.NewRequest("POST", fmt.Sprintf("/rctn/%s", res2.Id), bytes.NewReader(b3))
+	req3.Header.Set("Content-Type", "application/json")
+	req3.Header.Set("Authorization", "Bearer "+authToken)
+	router.ServeHTTP(w3, req3)
+
+	assert.Equal(t, http.StatusCreated, w3.Code)
+	var res3 ResPostReactionBody
+	_ = json.Unmarshal(w3.Body.Bytes(), &res3)
+	assert.NotEmpty(t, res3.Id)
+}
+
+func TestGetReactionShouldHaveExpectedResult(t *testing.T) {
+	dbConn := db.Connect()
+	defer dbConn.Close()
+	db.CreateTables(dbConn)
+
+	router := route.SetupRouter(dbConn)
+
+	authToken := signUp(t, router, fmt.Sprintf("user%d", getRandInt()), "123456")
+
+	randHostname := "https://" + getRandomString() + ".example.com/category/blah/page.php?p1=abc&p2=123"
+	body1 := gin.H{
+		"url":   randHostname,
+		"title": "Lorem ipsum",
+	}
+	b1, _ := json.Marshal(body1)
+
+	w1 := httptest.NewRecorder()
+	req1, _ := http.NewRequest("POST", "/tpc", bytes.NewReader(b1))
+	req1.Header.Set("Content-Type", "application/json")
+	req1.Header.Set("Authorization", "Bearer "+authToken)
+	router.ServeHTTP(w1, req1)
+
+	assert.Equal(t, http.StatusCreated, w1.Code)
+	assert.NotEmpty(t, w1.Body.String())
+
+	res1 := ResPostTopicBody{}
+	_ = json.Unmarshal(w1.Body.Bytes(), &res1)
+	assert.NotEmpty(t, res1.Id)
+
+	// post comment
+	body2 := gin.H{
+		"comment": "I like it! " + getRandomString(),
+	}
+	b2, _ := json.Marshal(body2)
+
+	w2 := httptest.NewRecorder()
+	req2, _ := http.NewRequest("POST", fmt.Sprintf("/tpc/%s/cmt", res1.Id), bytes.NewReader(b2))
+	req2.Header.Set("Content-Type", "application/json")
+	req2.Header.Set("Authorization", "Bearer "+authToken)
+	router.ServeHTTP(w2, req2)
+
+	assert.Equal(t, http.StatusCreated, w2.Code)
+	var res2 ResPostCommentBody
+	_ = json.Unmarshal(w2.Body.Bytes(), &res2)
+	assert.NotEmpty(t, res2.Id)
+
+	// post reaction
+	body3 := gin.H{
+		"reaction": rand.Intn(99),
+	}
+	b3, _ := json.Marshal(body3)
+
+	w3 := httptest.NewRecorder()
+	req3, _ := http.NewRequest("POST", fmt.Sprintf("/rctn/%s", res2.Id), bytes.NewReader(b3))
+	req3.Header.Set("Content-Type", "application/json")
+	req3.Header.Set("Authorization", "Bearer "+authToken)
+	router.ServeHTTP(w3, req3)
+
+	assert.Equal(t, http.StatusCreated, w3.Code)
+	var res3 ResPostReactionBody
+	_ = json.Unmarshal(w3.Body.Bytes(), &res3)
+	assert.NotEmpty(t, res3.Id)
+
+	w4 := httptest.NewRecorder()
+	req4, _ := http.NewRequest("GET", fmt.Sprintf("/rctn/%s", res2.Id), nil)
+	req4.Header.Set("Content-Type", "application/json")
+	req4.Header.Set("Authorization", "Bearer "+authToken)
+	router.ServeHTTP(w4, req4)
+
+	assert.Equal(t, http.StatusOK, w4.Code)
+	assert.NotEmpty(t, w4.Body.String())
+	log.Println(w4.Body.String())
+
+	assert.True(t, strings.Count(w4.Body.String(), "count") > 0)
+	assert.True(t, strings.Count(w4.Body.String(), "reaction") > 0)
 }
