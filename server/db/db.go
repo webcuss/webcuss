@@ -11,6 +11,7 @@ import (
 
 func Connect() *pgxpool.Pool {
 	connString := os.Getenv("DATABASE_URL")
+	log.Println("connString=", connString)
 	if strings.TrimSpace(connString) == "" {
 		panic("Database URL not found")
 	}
