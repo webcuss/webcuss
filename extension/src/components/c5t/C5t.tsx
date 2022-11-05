@@ -1,6 +1,7 @@
 import { format, parseISO } from "date-fns";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { useDeleteReaction, useGetRactions, usePostReaction } from "../../http";
 import { P } from "../../interfaces/common";
 import { IC5t } from "../../interfaces/model";
 import ActionLike from "../action-like/ActionLike";
@@ -12,8 +13,32 @@ interface C5tProps extends P {
     data: IC5t;
 }
 
+enum Reaction {
+    // Minimum values is 0
+    LIKE = 1,
+}
+
 const C5t = (p: C5tProps) => {
     const [isReplying, setIsReplying] = useState<boolean>(false);
+    const [likeCount, setLikeCount] = useState<number>(0);
+    const [liked, setLiked] = useState<boolean>(false);
+    const [updatingReaction, setUpdatingReaction] = useState<boolean>(false);
+
+    const {data: hReactions} = useGetRactions(p.data.id);
+    const postReaction = usePostReaction(p.data.id);
+    const deleteReaction = useDeleteReaction(p.data.id);
+
+    useEffect(() => {
+        if (hReactions) {
+            const isLiked = hReactions.user.find(v => v === Reaction.LIKE) !== undefined;
+            setLiked(isLiked);
+
+            const reactionLike = hReactions.all.find(v => v.reaction === Reaction.LIKE);
+            if (reactionLike) {
+                setLikeCount(reactionLike.count);
+            }
+        }
+    }, [hReactions]);
 
     const replyClickHandler = () => {
         setIsReplying(true);
@@ -21,6 +46,23 @@ const C5t = (p: C5tProps) => {
 
     const cancelReplyHandler = () => {
         setIsReplying(false);
+    };
+
+    const likeClickHandler = async () => {
+        if (!updatingReaction) {
+            try {
+                setUpdatingReaction(true);
+                if (liked) {
+                    await deleteReaction.mutateAsync({reaction: Reaction.LIKE});
+                    console.log("reaction deleted");
+                } else {
+                    const res = await postReaction.mutateAsync({reaction: Reaction.LIKE});
+                    console.log({res});
+                }
+            } finally {
+                setUpdatingReaction(false);
+            }
+        }
     };
 
     return (
@@ -33,7 +75,7 @@ const C5t = (p: C5tProps) => {
             <div>{p.data.content}</div>
 
             <Actions>
-                <ActionLike count={69} />
+                <ActionLike count={likeCount} liked={liked} onClick={likeClickHandler} />
                 <ActionReply onClick={replyClickHandler} />
             </Actions>
 

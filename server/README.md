@@ -76,7 +76,7 @@ go test
 | id        | string      | y     |            |            |
 | userId    | string      | y     | user.id    |            |
 | commentId | string      | y     | comment.id |            |
-| reaction  | int         |       |            | `0`=👍     |
+| reaction  | int         |       |            | `1`=👍     |
 | createdOn | timestamp   | y     |            |            |
 **Unique constraint**: `[userId, commentId, reaction]`
 

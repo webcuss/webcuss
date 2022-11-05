@@ -56,3 +56,17 @@ export interface IGetRepliesResponse {
 export interface IAddReplyResponse {
     id: string;
 }
+
+export interface IReaction {
+    reaction: number;
+    count: number;
+}
+
+export interface IGetReactionsResponse {
+    user: number[];
+    all: IReaction[];
+}
+
+export interface IPostReactionResponse {
+    id: string;
+}
