@@ -813,6 +813,8 @@ func TestGetReactionShouldHaveExpectedResult(t *testing.T) {
 	assert.NotEmpty(t, resString)
 	log.Println(resString)
 
+	assert.True(t, strings.Count(resString, "all") > 0)
 	assert.True(t, strings.Count(resString, "count") > 0)
 	assert.True(t, strings.Count(resString, "reaction") > 0)
+	assert.True(t, strings.Count(resString, "user") > 0)
 }
