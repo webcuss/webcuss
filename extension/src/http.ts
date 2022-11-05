@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from "axios";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
     IAddCommentResponse,
@@ -42,6 +42,15 @@ http.interceptors.request.use(async (conf) => {
         }
     }
     return c;
+});
+
+http.interceptors.response.use(async (response: AxiosResponse) => {
+    console.log("response.status=" + response.status);
+    
+    if (response.status === 401) {
+        await chromeExt.storageRemoveValue("token");
+    }
+    return response;
 });
 
 export const useSignup = () => {
