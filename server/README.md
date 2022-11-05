@@ -247,3 +247,7 @@ go test
                 ]
             }
             ```
+    * DELETE - delete the reaction on a comment
+        * qs
+            * `&r` - reaction code
+        * returns 204 No Content
