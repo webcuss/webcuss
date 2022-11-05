@@ -36,6 +36,8 @@ const C5t = (p: C5tProps) => {
             const reactionLike = hReactions.all.find(v => v.reaction === Reaction.LIKE);
             if (reactionLike) {
                 setLikeCount(reactionLike.count);
+            } else {
+                setLikeCount(0);
             }
         }
     }, [hReactions]);
