@@ -159,3 +159,37 @@ func GetReaction(c *gin.Context, dbConn *pgxpool.Pool) {
 		"all":  resultAll,
 	})
 }
+
+func DeleteReaction(c *gin.Context, dbConn *pgxpool.Pool) {
+	user := c.MustGet("user").(types.Avatar)
+	userId := fmt.Sprintf("%x", user.Id.Bytes)
+
+	var uri types.DeleteReactionUri
+	err := c.BindUri(&uri)
+	if err != nil {
+		c.String(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	reaction, exists := c.GetQuery("r")
+	if !exists || reaction == "" {
+		c.String(http.StatusBadRequest, "Missing query parameter `r`")
+		return
+	}
+
+	sql := `
+	DELETE FROM reaction r
+	WHERE r."userId" = $1
+		AND r."commentId" = $2
+		AND r."reaction" = $3
+	RETURNING id;
+	`
+	var reactionId pgtype.UUID
+	err = dbConn.QueryRow(context.Background(), sql, userId, uri.CommentId, reaction).Scan(&reactionId)
+	if err != nil || !reactionId.Valid {
+		log.Println("Failed to delete reaction, err=", err.Error())
+		c.String(http.StatusNotFound, "Not found")
+		return
+	}
+	c.String(http.StatusNoContent, "")
+}
