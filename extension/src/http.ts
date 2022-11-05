@@ -45,12 +45,14 @@ http.interceptors.request.use(async (conf) => {
 });
 
 http.interceptors.response.use(async (response: AxiosResponse) => {
-    console.log("response.status=" + response.status);
-    
-    if (response.status === 401) {
-        await chromeExt.storageRemoveValue("token");
-    }
     return response;
+}, async (err) => {
+    if (err.response.status === 401) {
+        console.log("Session expired");
+        await chromeExt.storageClear();
+        console.log("Storage has been cleared");
+    }
+    return Promise.reject(err.response);
 });
 
 export const useSignup = () => {
