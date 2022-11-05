@@ -235,11 +235,15 @@ go test
         * returns 200 Ok
             ```json
             {
-                "data": [
+                "all": [
                     {
                         "reaction": "number",
                         "count": "number"
                     }
+                ],
+                "user": [
+                    0,
+                    1
                 ]
             }
             ```

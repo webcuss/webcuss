@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"math/big"
 	"net/http"
 	"time"
 
@@ -87,6 +88,9 @@ func PostReaction(c *gin.Context, dbConn *pgxpool.Pool) {
 }
 
 func GetReaction(c *gin.Context, dbConn *pgxpool.Pool) {
+	user := c.MustGet("user").(types.Avatar)
+	userId := fmt.Sprintf("%x", user.Id.Bytes)
+
 	var uri types.GetReactionUri
 	err := c.BindUri(&uri)
 	if err != nil {
@@ -112,7 +116,7 @@ func GetReaction(c *gin.Context, dbConn *pgxpool.Pool) {
 		return
 	}
 
-	result := make([]gin.H, 0)
+	resultAll := make([]gin.H, 0)
 	for rows.Next() {
 		var row ReactionCounts
 		err = rows.Scan(&row.Reaction, &row.Count)
@@ -124,10 +128,34 @@ func GetReaction(c *gin.Context, dbConn *pgxpool.Pool) {
 			"reaction": row.Reaction.Int,
 			"count":    row.Count.Int,
 		}
-		result = append(result, item)
+		resultAll = append(resultAll, item)
+	}
+
+	userSql := `
+	SELECT DISTINCT(r."reaction")
+	FROM reaction r
+	WHERE r."commentId" = $1
+		AND r."userId" = $2
+	`
+	rows, err = dbConn.Query(context.Background(), userSql, uri.CommentId, userId)
+	if err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	resultUser := make([]*big.Int, 0)
+	for rows.Next() {
+		var reaction pgtype.Numeric
+		err = rows.Scan(&reaction)
+		if err != nil || !reaction.Valid {
+			log.Println("Failed to parse row, err=", err)
+			continue
+		}
+		resultUser = append(resultUser, reaction.Int)
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"data": result,
+		"user": resultUser,
+		"all":  resultAll,
 	})
 }
