@@ -62,4 +62,8 @@ export class ChromeExtension extends BrowserExtension {
     public storageRemoveValue(key: string | string[]): Promise<void> {
         return chrome.storage.sync.remove(key);
     }
+
+    public storageClear(): Promise<void> {
+        return chrome.storage.sync.clear();
+    }
 }

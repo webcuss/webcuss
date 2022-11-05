@@ -6,4 +6,5 @@ export abstract class BrowserExtension {
     public abstract storageSetValue(value: {[key:string]: string}): Promise<void>;
     public abstract storageGetValue(key: string): Promise<string|undefined>;
     public abstract storageRemoveValue(key: string|string[]): Promise<void>;
+    public abstract storageClear(): Promise<void>;
 }
