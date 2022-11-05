@@ -70,6 +70,10 @@ func SetupRouter(dbConn *pgxpool.Pool) *gin.Engine {
 		rctnmgr.GetReaction(c, dbConn)
 	})
 
+	r.DELETE("/rctn/:commentId", func(c *gin.Context) {
+		rctnmgr.DeleteReaction(c, dbConn)
+	})
+
 	r.NoRoute(func(c *gin.Context) {
 		c.String(http.StatusNotFound, "Not found")
 	})

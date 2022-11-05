@@ -56,3 +56,7 @@ type PostReactionReq struct {
 type GetReactionUri struct {
 	CommentId string `uri:"commentId" binding:"required"`
 }
+
+type DeleteReactionUri struct {
+	CommentId string `uri:"commentId" binding:"required"`
+}
