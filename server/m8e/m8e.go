@@ -76,6 +76,7 @@ func CORS() gin.HandlerFunc {
 		}
 
 		if c.Request.Method == http.MethodOptions {
+			c.Header("Cache-Control", "max-age=604800") // cache for 1 week
 			c.AbortWithStatus(http.StatusNoContent)
 			return
 		}
