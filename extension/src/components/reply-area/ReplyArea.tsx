@@ -36,7 +36,7 @@ const ReplyArea = (p: IReplyAreaProps) => {
     }, []);
 
     const textChangeHandler = (e: React.ChangeEvent<HTMLSpanElement>) => {
-        const value = e.currentTarget.innerHTML;
+        const value = e.currentTarget.innerText;
         setReplyInput(value);
     };
 
