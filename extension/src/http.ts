@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from "axios";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
     IAddCommentResponse,
@@ -42,6 +42,17 @@ http.interceptors.request.use(async (conf) => {
         }
     }
     return c;
+});
+
+http.interceptors.response.use(async (response: AxiosResponse) => {
+    return response;
+}, async (err) => {
+    if (err.response.status === 401) {
+        console.log("Session expired");
+        await chromeExt.storageClear();
+        console.log("Storage has been cleared");
+    }
+    return Promise.reject(err.response);
 });
 
 export const useSignup = () => {

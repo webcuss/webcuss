@@ -6,15 +6,17 @@ export class ChromeExtension extends BrowserExtension {
     }
 
     public getPageTitle(): Promise<string | undefined> {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
                 if (tabs.length < 1) {
-                    reject("tabs are empty");
+                    console.log("tabs are empty");
+                    resolve(undefined);
                     return;
                 }
                 const currentTab = tabs[0];
                 if (!currentTab) {
-                    reject("currentTab is null");
+                    console.log("currentTab is null");
+                    resolve(undefined);
                     return;
                 }
                 resolve(currentTab.title);
@@ -23,15 +25,17 @@ export class ChromeExtension extends BrowserExtension {
     }
 
     public getPageUrl(): Promise<string | undefined> {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
                 if (tabs.length < 1) {
-                    reject("tabs are empty");
+                    console.log("tabs are empty");
+                    resolve(undefined);
                     return;
                 }
                 const currentTab = tabs[0];
                 if (!currentTab) {
-                    reject("currentTab is null");
+                    console.log("currentTab is null");
+                    resolve(undefined);
                     return;
                 }
                 resolve(currentTab.url);
@@ -57,5 +61,9 @@ export class ChromeExtension extends BrowserExtension {
 
     public storageRemoveValue(key: string | string[]): Promise<void> {
         return chrome.storage.sync.remove(key);
+    }
+
+    public storageClear(): Promise<void> {
+        return chrome.storage.sync.clear();
     }
 }
