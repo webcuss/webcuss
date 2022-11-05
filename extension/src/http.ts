@@ -1,6 +1,16 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { IAddCommentResponse, IAddReplyResponse, ICreateTopicResponse, IGetCommentsResponse, IGetRepliesResponse, IGetTopicsResponse, ISignupResponse } from "./interfaces/model";
+import {
+    IAddCommentResponse,
+    IAddReplyResponse,
+    ICreateTopicResponse,
+    IGetCommentsResponse,
+    IGetReactionsResponse,
+    IGetRepliesResponse,
+    IGetTopicsResponse,
+    IPostReactionResponse,
+    ISignupResponse
+} from "./interfaces/model";
 import { ChromeExtension } from "./data-structure/chrome-extension";
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
@@ -125,6 +135,46 @@ export const useAddReply = (commentId: string) => {
     }, {
         onSuccess: () => {
             queryClient.invalidateQueries(["get-replies", commentId]);
+        }
+    });
+};
+
+export const useGetRactions = (commentId: string) => {
+    return useQuery(["get-reactions", commentId], async () => {
+        const url = `/rctn/${commentId}`;
+        const {data} = await http.get<IGetReactionsResponse>(url);
+        return data;
+    });
+};
+
+export const usePostReaction = (commentId: string) => {
+    const queryClient = useQueryClient();
+    return useMutation(["post-reactions", commentId], async (params: {
+        reaction: number;
+    }) => {
+        const url = `/rctn/${commentId}`;
+        const {data} = await http.post<IPostReactionResponse>(url, {
+            reaction: params.reaction
+        });
+        return data;
+    }, {
+        onSuccess: () => {
+            queryClient.invalidateQueries(["get-reactions", commentId]);
+        }
+    });
+};
+
+export const useDeleteReaction = (commentId: string) => {
+    const queryClient = useQueryClient();
+    return useMutation(["delete-reactions", commentId], async (params: {
+        reaction: number;
+    }) => {
+        const url = `/rctn/${commentId}?r=${params.reaction}`;
+        await http.delete<null>(url);
+        return null;
+    }, {
+        onSuccess: () => {
+            queryClient.invalidateQueries(["get-reactions", commentId]);
         }
     });
 };
