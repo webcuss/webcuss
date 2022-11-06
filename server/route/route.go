@@ -85,6 +85,9 @@ For any concern and support, please contact us at notaprefix@gmail.com
 		content := `
 <!DOCTYPE html>
 <html>
+<head>
+    <title>Privacy Policy</title>
+</head>
 <body>
 	<h2>Data Privacy Policy</h2>
 	<h4>
