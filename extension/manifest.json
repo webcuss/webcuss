@@ -16,8 +16,7 @@
     "permissions": [
         "tabs",
         "downloads",
-        "storage",
-        "https://webcuss.xyz/*"
+        "storage"
     ],
     "commands": {
         "toggle-feature-debug": {
