@@ -73,18 +73,93 @@ func SetupRouter(dbConn *pgxpool.Pool) *gin.Engine {
 	r.DELETE("/rctn/:commentId", func(c *gin.Context) {
 		rctnmgr.DeleteReaction(c, dbConn)
 	})
+
 	r.GET("/support", func(c *gin.Context) {
 		content := `
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas nec fringilla orci, sed imperdiet turpis. Sed ac semper magna. Sed malesuada fringilla commodo. Integer suscipit neque et mauris gravida, a interdum ante tincidunt. Nunc et mi sed turpis eleifend porttitor at eget justo. Sed quis elit dolor. Sed gravida erat eget nisi laoreet pretium. Vivamus hendrerit volutpat faucibus. Nullam vestibulum dui sed lectus bibendum sodales. Cras ac diam tristique, pulvinar mauris vitae, tempus tortor. Pellentesque elit eros, consequat sit amet quam at, dictum luctus leo. Proin varius dolor diam, eget accumsan turpis accumsan a. Nulla facilisi. Aenean a urna augue. Suspendisse ultrices odio non turpis accumsan vehicula.
-
-Nullam auctor, tellus vitae mollis suscipit, nibh arcu facilisis nulla, ac iaculis metus neque eget lacus. Vivamus luctus risus vel lorem mollis, a lacinia neque cursus. Morbi ultrices risus ut orci congue sodales. Sed dignissim id sapien at pretium. Donec tristique, diam sed blandit condimentum, orci urna luctus dolor, eu tempus tortor nibh ut urna. Sed quis augue vitae ex dictum molestie vitae quis est. Proin posuere eros in metus porttitor, sed tincidunt diam hendrerit. Integer varius, dolor ullamcorper iaculis scelerisque, elit ex scelerisque metus, tempus congue velit nisi nec justo. Morbi sapien eros, rutrum ac scelerisque lacinia, molestie ac justo. Cras in vehicula augue. Suspendisse sem neque, rutrum non neque eu, mollis viverra urna. Proin id nunc at augue egestas accumsan. Cras semper odio ut nibh malesuada iaculis. Suspendisse et eleifend erat.
-
-Donec bibendum luctus viverra. Nunc congue erat risus, at tristique erat interdum vitae. Nam rutrum ultrices ullamcorper. Curabitur quis fermentum quam. Etiam bibendum urna ac purus aliquet eleifend. Ut consequat leo eu nisl ornare, eu pharetra diam feugiat. Suspendisse luctus, turpis id lacinia hendrerit, quam lorem dignissim quam, sed semper nulla tortor at dolor. Morbi consectetur euismod rhoncus. Suspendisse potenti. Etiam mattis placerat commodo. Donec hendrerit et diam ac eleifend. Curabitur convallis ullamcorper sem, ut gravida lectus suscipit et.
-
-Cras libero eros, accumsan vel interdum cursus, vulputate nec neque. Sed sodales odio tortor, non tempor felis posuere in. Suspendisse egestas cursus ullamcorper. Morbi eu lorem a nibh porta commodo a id nulla. In tortor neque, tristique at mi id, ornare luctus lacus. Phasellus gravida velit in ornare condimentum. Donec porttitor scelerisque orci, a pulvinar odio iaculis sit amet. Maecenas non velit eget sapien eleifend ornare. Sed luctus pulvinar imperdiet. Morbi sed nulla iaculis, laoreet felis eu, ultricies magna. Integer sed risus eget turpis ultrices dapibus id vitae nunc. Nulla at arcu ultrices, maximus ante vel, tempor turpis. Etiam fringilla, lectus eget vulputate accumsan, est sem dignissim risus, eget efficitur libero turpis vel leo. Aliquam et turpis sit amet nulla fringilla cursus at in nulla. Pellentesque a fringilla ipsum, eu convallis ipsum. Suspendisse purus orci, blandit eget pellentesque sit amet, venenatis interdum velit.
-
-Sed gravida quis odio in convallis. Integer vitae vestibulum est, nec lacinia elit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aenean vestibulum, urna in laoreet egestas, libero nisl volutpat odio, in dictum quam purus malesuada nunc. Phasellus id pharetra enim. Donec blandit, sapien non ultricies scelerisque, urna velit rhoncus leo, nec volutpat sapien enim a metus. Aliquam dapibus eleifend nisi, ut iaculis risus porta ut.
+For any concern and support, please contact us at notaprefix@gmail.com
 		`
+		c.String(http.StatusOK, content)
+	})
+
+	r.GET("/privacy-policy", func(c *gin.Context) {
+		content := `
+<!DOCTYPE html>
+<html>
+<body>
+	<h2>Data Privacy Policy</h2>
+	<h4>
+		Who We Are
+	</h4>
+	<p>
+		This Privacy Policy explains how Webcuss ("Webcuss," "we," or "us") collects, uses, and discloses information
+		about you. This Privacy Policy applies when you use our browser extensions that link to this Privacy Policy
+		(collectively, our "Services"), contact us through our contacts found at the bottom of this page.
+	</p>
+	<p>
+		We may change this Privacy Policy from time to time. If we make changes, we will notify you through the browser
+		extension app by showing a notification inside the app. We encourage you to review this Privacy Policy regularly
+		to stay informed about our information practices and the choices available to you.
+	</p>
+	<h4>
+		Collection of Personal Data
+	</h4>
+	<p>
+		We collect information you provided to us e.g., when you create an account by filling out registration form,
+		submit or post content through our Services, or communicate with us. The types of personal information we may
+		collect include your email address, username, your content (comments, replies, and reactions), and browser
+		activity (website title and URL).
+	</p>
+	<p>
+		We DO NOT collect data that are not mentioned above. You will find the data being collected and processed by
+		directly looking into the source code of this project on GitHub (https://github.com/webcuss/webcuss)
+	</p>
+	<h4>
+		Use of Personal Data
+	</h4>
+	<p>
+		We use the information we collect to provide, maintain, and improve our Services, which includes publishing and
+		distributing user-generated contents. We also use the information we collect to:
+	<ol>
+		<li>Create and maintain your Webcuss account.</li>
+		<li>Send you technical notices and security alert messages.</li>
+		<li>Debug to identify and repair errors in our Services.</li>
+	</ol>
+	</p>
+	<h4>
+		Sharing of Personal Data
+	</h4>
+	<ol>
+		<li>Your data is only used by Webcuss and its Services.</li>
+		<li>We DO NOT share or sell your information to third-parties.</li>
+		<li>All your information is stored in our cloud service provider (AWS) with only the technical staff (developers and
+			system admins) have access to.</li>
+		<li>We may disclose personal information if we believe that disclosure is in accordance with, or required by, any
+			applicable law or legal process, including lawful requests by public authorities to meet national security or law
+			enforcement requirements.</li>
+	</ol>
+	<p>
+	</p>
+	<h4>
+		Retention of Personal Data
+	</h4>
+	<p>
+		We keep your personal data associated with your account for as long as your account remain active. You can request
+		to delete your account by contacting us (we may ask for additional informations to verify account ownership), see
+		contacts at the bottom of this page.
+	</p>
+	<h4>
+		Contact Us
+	</h4>
+	<p>
+		You can reach us on the following email
+		<ul>
+			<li>notaprefix@gmail.com</li>
+		</ul>
+	</p>
+</body>
+</html>
+		`
+		c.Header("Content-Type", "text/html")
 		c.String(http.StatusOK, content)
 	})
 

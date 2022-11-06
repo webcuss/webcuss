@@ -18,6 +18,8 @@ import (
 func A11r(db *pgxpool.Pool) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if c.Request.URL.Path == "/" ||
+			strings.HasPrefix(c.Request.URL.Path, "/privacy-policy") ||
+			strings.HasPrefix(c.Request.URL.Path, "/support") ||
 			strings.HasPrefix(c.Request.URL.Path, "/sup") ||
 			strings.HasPrefix(c.Request.URL.Path, "/sin") {
 			c.Next()
