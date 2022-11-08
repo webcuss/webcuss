@@ -9,8 +9,14 @@ Use cases:
 ## Note
 1. If available, use the website's dedicated comment section.
 
+## Chrome Web Store
+Install the latest version from Chrome Web Store [https://chrome.google.com/webstore/detail/webcuss/gdfbkncebihdbclbomkddpeggepmodkl](https://chrome.google.com/webstore/detail/webcuss/gdfbkncebihdbclbomkddpeggepmodkl)
+
+## Docker Hub
+Get the latest build on Docker Hub Registry [hub.docker.com/r/devsareno/webcuss](hub.docker.com/r/devsareno/webcuss)
+
 ## Backend | Server
-Go to [/server](https://github.com/webcuss/webcuss/tree/main/server)
+Go to [/server](./server)
 
 ## Frontend | Extension
-Go to [/extension](https://github.com/webcuss/webcuss/tree/main/extension)
+Go to [/extension](./extension)
