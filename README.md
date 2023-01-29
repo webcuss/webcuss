@@ -13,7 +13,7 @@ Use cases:
 Install the latest version from Chrome Web Store [https://chrome.google.com/webstore/detail/webcuss/gdfbkncebihdbclbomkddpeggepmodkl](https://chrome.google.com/webstore/detail/webcuss/gdfbkncebihdbclbomkddpeggepmodkl)
 
 ## Docker Hub
-Get the latest build on Docker Hub Registry [hub.docker.com/r/devsareno/webcuss](hub.docker.com/r/devsareno/webcuss)
+Get the latest build on Docker Hub Registry [hub.docker.com/r/devsareno/webcuss](https://hub.docker.com/r/devsareno/webcuss)
 
 ## Backend | Server
 Go to [/server](./server)
