@@ -1,3 +1,6 @@
+> **Warning**
+> This repository will be moved to developer's repository soon https://github.com/dev-sareno/nen
+
 # webcuss
 Google Chrome extension that allows users to add comments to any website.
 
