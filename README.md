@@ -1,5 +1,5 @@
 > **Warning**
-> This repository will be moved to developer's repository soon https://github.com/dev-sareno/nen
+> This repository will be moved to developer's repository soon https://github.com/dev-sareno/staxh
 
 # webcuss
 Google Chrome extension that allows users to add comments to any website.
