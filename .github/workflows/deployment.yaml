@@ -20,6 +20,7 @@ jobs:
               - '.github/workflows/**'
     outputs:
       server-filter: ${{ steps.changes.outputs.server-changes }}
+      cicd-filter: ${{ steps.changes.outputs.cicd-changes }}
   build_and_push:
     runs-on: ubuntu-latest
     needs: path-filter
